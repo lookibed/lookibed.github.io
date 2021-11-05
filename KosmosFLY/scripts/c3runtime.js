@@ -3504,25 +3504,26 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.System.Cnds.OnLayoutStart,
 		C3.Plugins.Sprite.Acts.SetInstanceVar,
 		C3.Plugins.Sprite.Exps.X,
-		C3.Plugins.Sprite.Exps.Y,
 		C3.Plugins.Sprite.Acts.AddChild,
 		C3.Plugins.System.Cnds.IsGroupActive,
-		C3.Plugins.Sprite.Cnds.CompareInstanceVar,
-		C3.Plugins.Sprite.Cnds.CompareY,
-		C3.Plugins.Sprite.Acts.SetY,
-		C3.Plugins.Sprite.Exps.Height,
+		C3.Plugins.Sprite.Cnds.CompareX,
+		C3.Plugins.Sprite.Exps.Width,
+		C3.Plugins.Sprite.Acts.SetX,
 		C3.Plugins.Sprite.Cnds.IsOnLayer,
 		C3.Behaviors.DragnDrop.Acts.SetEnabled,
-		C3.Plugins.System.Cnds.Else,
 		C3.Behaviors.DragnDrop.Cnds.OnDragStart,
 		C3.Plugins.Sprite.Cnds.IsOverlapping,
 		C3.Plugins.Sprite.Acts.RemoveFromParent,
 		C3.Plugins.Sprite.Acts.RemoveChild,
 		C3.Plugins.Sprite.Acts.MoveToLayer,
 		C3.Plugins.System.Acts.CreateObjectByName,
+		C3.Plugins.Sprite.Exps.Y,
 		C3.Plugins.System.Acts.Wait,
 		C3.Behaviors.DragnDrop.Cnds.OnDrop,
 		C3.Plugins.Sprite.Acts.Destroy,
+		C3.Plugins.Sprite.Acts.SetSize,
+		C3.Plugins.Sprite.Exps.ImageWidth,
+		C3.Plugins.Sprite.Exps.ImageHeight,
 		C3.Plugins.Mouse.Cnds.OnObjectClicked,
 		C3.Plugins.Sprite.Acts.SetAngle,
 		C3.Plugins.Sprite.Exps.Angle
@@ -3663,38 +3664,28 @@ self.C3_ExpressionFuncs = [
 			return () => n0.ExpObject();
 		},
 		() => "Slide",
-		() => "up",
-		() => "UP",
 		p => {
 			const n0 = p._GetNode(0);
-			return () => n0.ExpInstVar();
+			const n1 = p._GetNode(1);
+			const n2 = p._GetNode(2);
+			return () => (n0.ExpInstVar() + ((n1.ExpObject() - n2.ExpObject()) / 2));
 		},
 		p => {
 			const n0 = p._GetNode(0);
 			const n1 = p._GetNode(1);
 			const n2 = p._GetNode(2);
-			return () => (n0.ExpInstVar() + (n1.ExpObject() - n2.ExpObject()));
-		},
-		() => "down",
-		() => "Down",
-		p => {
-			const n0 = p._GetNode(0);
-			const n1 = p._GetNode(1);
-			const n2 = p._GetNode(2);
-			return () => (n0.ExpInstVar() - (n1.ExpObject() - n2.ExpObject()));
+			return () => (n0.ExpInstVar() - ((n1.ExpObject() - n2.ExpObject()) / 2));
 		},
 		() => "Layer 1",
 		p => {
 			const n0 = p._GetNode(0);
 			const n1 = p._GetNode(1);
-			const n2 = p._GetNode(2);
-			return () => (n0.ExpObject() - (n1.ExpObject() - n2.ExpObject()));
+			return () => (n0.ExpObject() - (n1.ExpObject() / 2));
 		},
 		p => {
 			const n0 = p._GetNode(0);
 			const n1 = p._GetNode(1);
-			const n2 = p._GetNode(2);
-			return () => (n0.ExpObject() + (n1.ExpObject() - n2.ExpObject()));
+			return () => (n0.ExpObject() + (n1.ExpObject() / 2));
 		},
 		() => "MovetoConstruct",
 		() => "Layer 3",
