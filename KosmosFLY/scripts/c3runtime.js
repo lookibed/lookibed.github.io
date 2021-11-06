@@ -3770,6 +3770,66 @@ CurrentTime(){if(self["C3_GetAudioContextCurrentTime"])return self["C3_GetAudioC
 }
 
 {
+'use strict';const C3=self.C3;C3.Plugins.Text=class TextPlugin extends C3.SDKPluginBase{constructor(opts){super(opts)}Release(){super.Release()}};
+
+}
+
+{
+'use strict';const C3=self.C3;C3.Plugins.Text.Type=class TextType extends C3.SDKTypeBase{constructor(objectClass){super(objectClass)}Release(){super.Release()}OnCreate(){}LoadTextures(renderer){}ReleaseTextures(){}};
+
+}
+
+{
+'use strict';const C3=self.C3;const C3X=self.C3X;const TEMP_COLOR_ARRAY=[0,0,0];const TEXT=0;const ENABLE_BBCODE=1;const FONT=2;const SIZE=3;const LINE_HEIGHT=4;const BOLD=5;const ITALIC=6;const COLOR=7;const HORIZONTAL_ALIGNMENT=8;const VERTICAL_ALIGNMENT=9;const WRAPPING=10;const INITIALLY_VISIBLE=11;const ORIGIN=12;const HORIZONTAL_ALIGNMENTS=["left","center","right"];const VERTICAL_ALIGNMENTS=["top","center","bottom"];const WORD_WRAP=0;const CHARACTER_WRAP=1;const tempRect=new C3.Rect;
+const tempQuad=new C3.Quad;const tempColor=new C3.Color;
+C3.Plugins.Text.Instance=class TextInstance extends C3.SDKWorldInstanceBase{constructor(inst,properties){super(inst);this._text="";this._enableBBcode=true;this._faceName="Arial";this._ptSize=12;this._lineHeightOffset=0;this._isBold=false;this._isItalic=false;this._color=C3.New(C3.Color);this._horizontalAlign=0;this._verticalAlign=0;this._wrapByWord=true;this._typewriterStartTime=-1;this._typewriterEndTime=-1;this._typewriterLength=0;this._rendererText=C3.New(C3.Gfx.RendererText,this._runtime.GetRenderer(),
+{timeout:5});this._rendererText.ontextureupdate=()=>this._runtime.UpdateRender();this._rendererText.SetIsAsync(false);if(properties){this._text=properties[TEXT];this._enableBBcode=!!properties[ENABLE_BBCODE];this._faceName=properties[FONT];this._ptSize=properties[SIZE];this._lineHeightOffset=properties[LINE_HEIGHT];this._isBold=!!properties[BOLD];this._isItalic=!!properties[ITALIC];this._horizontalAlign=properties[HORIZONTAL_ALIGNMENT];this._verticalAlign=properties[VERTICAL_ALIGNMENT];this._wrapByWord=
+properties[WRAPPING]===WORD_WRAP;const v=properties[COLOR];this._color.setRgb(v[0],v[1],v[2]);this.GetWorldInfo().SetVisible(properties[INITIALLY_VISIBLE])}this._UpdateTextSettings()}Release(){this._CancelTypewriter();this._rendererText.Release();this._rendererText=null;super.Release()}_UpdateTextSettings(){const rendererText=this._rendererText;rendererText.SetText(this._text);rendererText.SetBBCodeEnabled(this._enableBBcode);rendererText.SetFontName(this._faceName);rendererText.SetLineHeight(this._lineHeightOffset);
+rendererText.SetBold(this._isBold);rendererText.SetItalic(this._isItalic);rendererText.SetColor(this._color);rendererText.SetHorizontalAlignment(HORIZONTAL_ALIGNMENTS[this._horizontalAlign]);rendererText.SetVerticalAlignment(VERTICAL_ALIGNMENTS[this._verticalAlign]);rendererText.SetWordWrapMode(this._wrapByWord?"word":"character")}_UpdateTextSize(){const wi=this.GetWorldInfo();this._rendererText.SetFontSize(this._ptSize);this._rendererText.SetFontSizeScale(wi.GetSceneGraphScale());const layer=wi.GetLayer();
+const textZoom=layer.GetRenderScale()*layer.Get2DScaleFactorToZ(wi.GetTotalZElevation());this._rendererText.SetSize(wi.GetWidth(),wi.GetHeight(),textZoom)}Draw(renderer){const wi=this.GetWorldInfo();this._UpdateTextSize();const texture=this._rendererText.GetTexture();if(!texture)return;const layer=wi.GetLayer();if(wi.GetAngle()===0&&layer.GetAngle()===0&&wi.GetTotalZElevation()===0&&!wi.HasMesh()&&layer.RendersIn2DMode()){const quad=wi.GetBoundingQuad();const [dl,dt]=layer.LayerToDrawSurface(quad.getTlx(),
+quad.getTly());const [dr,db]=layer.LayerToDrawSurface(quad.getBrx(),quad.getBry());const offX=dl-Math.round(dl);const offY=dt-Math.round(dt);tempRect.set(dl,dt,dr,db);tempRect.offset(-offX,-offY);tempQuad.setFromRect(tempRect);const [rtWidth,rtHeight]=renderer.GetRenderTargetSize(renderer.GetRenderTarget());this._runtime.GetCanvasManager().SetDeviceTransform(renderer,rtWidth,rtHeight);renderer.SetTexture(texture);renderer.Quad3(tempQuad,this._rendererText.GetTexRect());layer._SetTransform(renderer)}else{renderer.SetTexture(texture);
+if(wi.HasMesh())this._DrawMesh(wi,renderer);else this._DrawStandard(wi,renderer)}}_DrawStandard(wi,renderer){let quad=wi.GetBoundingQuad();if(this._runtime.IsPixelRoundingEnabled())quad=this._PixelRoundQuad(quad);renderer.Quad3(quad,this._rendererText.GetTexRect())}_DrawMesh(wi,renderer){const transformedMesh=wi.GetTransformedMesh();if(wi.IsMeshChanged()){wi.CalculateBbox(tempRect,tempQuad,false);let quad=tempQuad;if(this._runtime.IsPixelRoundingEnabled())quad=this._PixelRoundQuad(quad);transformedMesh.CalculateTransformedMesh(wi.GetSourceMesh(),
+quad,this._rendererText.GetTexRect());wi.SetMeshChanged(false)}transformedMesh.Draw(renderer)}_PixelRoundQuad(quad){const offX=quad.getTlx()-Math.round(quad.getTlx());const offY=quad.getTly()-Math.round(quad.getTly());if(offX===0&&offY===0)return quad;else{tempQuad.copy(quad);tempQuad.offset(-offX,-offY);return tempQuad}}SaveToJson(){const o={"t":this._text,"c":this._color.toJSON(),"fn":this._faceName,"ps":this._ptSize};if(this._enableBBcode)o["bbc"]=this._enableBBcode;if(this._horizontalAlign!==
+0)o["ha"]=this._horizontalAlign;if(this._verticalAlign!==0)o["va"]=this._verticalAlign;if(!this._wrapByWord)o["wr"]=this._wrapByWord;if(this._lineHeightOffset!==0)o["lho"]=this._lineHeightOffset;if(this._isBold)o["b"]=this._isBold;if(this._isItalic)o["i"]=this._isItalic;if(this._typewriterEndTime!==-1)o["tw"]={"st":this._typewriterStartTime,"en":this._typewriterEndTime,"l":this._typewriterLength};return o}LoadFromJson(o){this._CancelTypewriter();this._text=o["t"],this._color.setFromJSON(o["c"]);this._faceName=
+o["fn"],this._ptSize=o["ps"];this._enableBBcode=o.hasOwnProperty("bbc")?o["bbc"]:false;this._horizontalAlign=o.hasOwnProperty("ha")?o["ha"]:0;this._verticalAlign=o.hasOwnProperty("va")?o["va"]:0;this._wrapByWord=o.hasOwnProperty("wr")?o["wr"]:true;this._lineHeightOffset=o.hasOwnProperty("lho")?o["lho"]:0;this._isBold=o.hasOwnProperty("b")?o["b"]:false;this._isItalic=o.hasOwnProperty("i")?o["i"]:false;if(o.hasOwnProperty("tw")){const tw=o["tw"];this._typewriterStartTime=tw["st"];this._typewriterEndTime=
+tw["en"];this._typewriterLength=tw["l"]}this._UpdateTextSettings();if(this._typewriterEndTime!==-1)this._StartTicking()}GetPropertyValueByIndex(index){switch(index){case TEXT:return this._text;case ENABLE_BBCODE:return this._enableBBcode;case FONT:return this._faceName;case SIZE:return this._ptSize;case LINE_HEIGHT:return this._lineHeightOffset;case BOLD:return this._isBold;case ITALIC:return this._isItalic;case COLOR:TEMP_COLOR_ARRAY[0]=this._color.getR();TEMP_COLOR_ARRAY[1]=this._color.getG();TEMP_COLOR_ARRAY[2]=
+this._color.getB();return TEMP_COLOR_ARRAY;case HORIZONTAL_ALIGNMENT:return this._horizontalAlign;case VERTICAL_ALIGNMENT:return this._verticalAlign;case WRAPPING:return this._wrapByWord?CHARACTER_WRAP:WORD_WRAP}}SetPropertyValueByIndex(index,value){switch(index){case TEXT:if(this._text===value)return;this._text=value;this._UpdateTextSettings();break;case ENABLE_BBCODE:if(this._enableBBcode===!!value)return;this._enableBBcode=!!value;this._UpdateTextSettings();break;case FONT:if(this._faceName===
+value)return;this._faceName=value;this._UpdateTextSettings();break;case SIZE:if(this._ptSize===value)return;this._ptSize=value;this._UpdateTextSettings();break;case LINE_HEIGHT:if(this._lineHeightOffset===value)return;this._lineHeightOffset=value;this._UpdateTextSettings();break;case BOLD:if(this._isBold===!!value)return;this._isBold=!!value;this._UpdateTextSettings();break;case ITALIC:if(this._isItalic===!!value)return;this._isItalic=!!value;this._UpdateTextSettings();break;case COLOR:const c=this._color;
+const v=value;if(c.getR()===v[0]&&c.getG()===v[1]&&c.getB()===v[2])return;this._color.setRgb(v[0],v[1],v[2]);this._UpdateTextSettings();break;case HORIZONTAL_ALIGNMENT:if(this._horizontalAlign===value)return;this._horizontalAlign=value;this._UpdateTextSettings();break;case VERTICAL_ALIGNMENT:if(this._verticalAlign===value)return;this._verticalAlign=value;this._UpdateTextSettings();break;case WRAPPING:if(this._wrapByWord===(value===WORD_WRAP))return;this._wrapByWord=value===WORD_WRAP;this._UpdateTextSettings();
+break}}SetPropertyColorOffsetValueByIndex(index,r,g,b){if(r===0&&g===0&&b===0)return;switch(index){case COLOR:this._color.addRgb(r,g,b);this._UpdateTextSettings();break}}_SetText(text){if(this._text===text)return;this._text=text;this._rendererText.SetText(text);this._runtime.UpdateRender()}GetText(){return this._text}_StartTypewriter(text,duration){this._SetText(text);this._typewriterStartTime=this._runtime.GetWallTime();this._typewriterEndTime=this._typewriterStartTime+duration/this.GetInstance().GetActiveTimeScale();
+this._typewriterLength=C3.BBString.StripAnyTags(text).length;this._rendererText.SetDrawMaxCharacterCount(0);this._StartTicking()}_CancelTypewriter(){this._typewriterStartTime=-1;this._typewriterEndTime=-1;this._typewriterLength=0;this._rendererText.SetDrawMaxCharacterCount(-1);this._StopTicking()}_FinishTypewriter(){if(this._typewriterEndTime===-1)return;this._CancelTypewriter();this.Trigger(C3.Plugins.Text.Cnds.OnTypewriterTextFinished);this._runtime.UpdateRender()}_SetFontFace(face){if(this._faceName===
+face)return;this._faceName=face;this._rendererText.SetFontName(face);this._runtime.UpdateRender()}_GetFontFace(){return this._faceName}_SetBold(b){b=!!b;if(this._isBold===b)return;this._isBold=b;this._rendererText.SetBold(b);this._runtime.UpdateRender()}_IsBold(){return this._isBold}_SetItalic(i){i=!!i;if(this._isItalic===i)return;this._isItalic=i;this._rendererText.SetItalic(i);this._runtime.UpdateRender()}_IsItalic(){return this._isItalic}_SetFontSize(size){if(this._ptSize===size)return;this._ptSize=
+size;this._runtime.UpdateRender()}_GetFontSize(){return this._ptSize}_SetFontColor(color){if(this._color.equalsIgnoringAlpha(color))return;this._color.copyRgb(color);this._rendererText.SetColor(this._color);this._runtime.UpdateRender()}_GetFontColor(){return this._color}_SetLineHeight(lho){if(this._lineHeightOffset===lho)return;this._lineHeightOffset=lho;this._UpdateTextSettings();this._runtime.UpdateRender()}_GetLineHeight(){return this._lineHeightOffset}_SetHAlign(h){if(this._horizontalAlign===
+h)return;this._horizontalAlign=h;this._UpdateTextSettings();this._runtime.UpdateRender()}_GetHAlign(){return this._horizontalAlign}_SetVAlign(v){if(this._verticalAlign===v)return;this._verticalAlign=v;this._UpdateTextSettings();this._runtime.UpdateRender()}_GetVAlign(){return this._verticalAlign}_SetWrapByWord(w){w=!!w;if(this._wrapByWord===w)return;this._wrapByWord=w;this._UpdateTextSettings();this._runtime.UpdateRender()}_IsWrapByWord(){return this._wrapByWord}_GetTextWidth(){this._UpdateTextSize();
+return this._rendererText.GetTextWidth()}_GetTextHeight(){this._UpdateTextSize();return this._rendererText.GetTextHeight()}Tick(){const wallTime=this._runtime.GetWallTime();if(wallTime>=this._typewriterEndTime){this._CancelTypewriter();this.Trigger(C3.Plugins.Text.Cnds.OnTypewriterTextFinished);this._runtime.UpdateRender()}else{let displayLength=C3.relerp(this._typewriterStartTime,this._typewriterEndTime,wallTime,0,this._typewriterLength);displayLength=Math.floor(displayLength);if(displayLength!==
+this._rendererText.GetDrawMaxCharacterCount()){this._rendererText.SetDrawMaxCharacterCount(displayLength);this._runtime.UpdateRender()}}}GetDebuggerProperties(){const prefix="plugins.text";return[{title:prefix+".name",properties:[{name:prefix+".properties.text.name",value:this._text,onedit:v=>this._SetText(v)}]}]}GetScriptInterfaceClass(){return self.ITextInstance}};const map=new WeakMap;const SCRIPT_HORIZONTAL_ALIGNMENTS=new Map([["left",0],["center",1],["right",2]]);
+const SCRIPT_VERTICAL_ALIGNMENTS=new Map([["top",0],["center",1],["bottom",2]]);const SCRIPT_WRAP_MODES=new Map([["word",true],["character",false]]);
+self.ITextInstance=class ITextInstance extends self.IWorldInstance{constructor(){super();map.set(this,self.IInstance._GetInitInst().GetSdkInstance())}get text(){return map.get(this).GetText()}set text(str){C3X.RequireString(str);const inst=map.get(this);inst._CancelTypewriter();inst._SetText(str)}typewriterText(str,duration){C3X.RequireString(str);C3X.RequireFiniteNumber(duration);const inst=map.get(this);inst._CancelTypewriter();inst._StartTypewriter(str,duration)}typewriterFinish(){map.get(this)._FinishTypewriter()}set fontFace(str){C3X.RequireString(str);
+map.get(this)._SetFontFace(str)}get fontFace(){return map.get(this)._GetFontFace()}set isBold(b){map.get(this)._SetBold(b)}get isBold(){return map.get(this)._IsBold()}set isItalic(i){map.get(this)._SetItalic(i)}get isItalic(){return map.get(this)._IsItalic()}set sizePt(pt){C3X.RequireFiniteNumber(pt);map.get(this)._SetFontSize(pt)}get sizePt(){return map.get(this)._GetFontSize()}set fontColor(arr){C3X.RequireArray(arr);if(arr.length<3)throw new Error("expected 3 elements");tempColor.setRgb(arr[0],
+arr[1],arr[2]);map.get(this)._SetFontColor(tempColor)}get fontColor(){const c=map.get(this)._GetFontColor();return[c.getR(),c.getG(),c.getB()]}set lineHeight(lho){C3X.RequireFiniteNumber(lho);map.get(this)._SetLineHeight(lho)}get lineHeight(){return map.get(this)._GetLineHeight()}set horizontalAlign(str){C3X.RequireString(str);const h=SCRIPT_HORIZONTAL_ALIGNMENTS.get(str);if(typeof h==="undefined")throw new Error("invalid mode");map.get(this)._SetHAlign(h)}get horizontalAlign(){return HORIZONTAL_ALIGNMENTS[map.get(this)._GetHAlign()]}set verticalAlign(str){C3X.RequireString(str);
+const v=SCRIPT_VERTICAL_ALIGNMENTS.get(str);if(typeof v==="undefined")throw new Error("invalid mode");map.get(this)._SetVAlign(v)}get verticalAlign(){return VERTICAL_ALIGNMENTS[map.get(this)._GetVAlign()]}set wordWrapMode(str){C3X.RequireString(str);const isWrapByWord=SCRIPT_WRAP_MODES.get(str);if(typeof isWrapByWord==="undefined")throw new Error("invalid mode");map.get(this)._SetWrapByWord(isWrapByWord)}get wordWrapMode(){return map.get(this)._IsWrapByWord()?"word":"character"}get textWidth(){return map.get(this)._GetTextWidth()}get textHeight(){return map.get(this)._GetTextHeight()}};
+
+}
+
+{
+'use strict';const C3=self.C3;C3.Plugins.Text.Cnds={CompareText(str,caseSensitive){if(caseSensitive)return this._text===str;else return C3.equalsNoCase(this._text,str)},IsRunningTypewriterText(){return this._typewriterEndTime!==-1},OnTypewriterTextFinished(){return true}};
+
+}
+
+{
+'use strict';const C3=self.C3;const tempColor=C3.New(C3.Color);
+C3.Plugins.Text.Acts={SetText(param){this._CancelTypewriter();if(typeof param==="number"&&param<1E9)param=Math.round(param*1E10)/1E10;this._SetText(param.toString())},AppendText(param){this._CancelTypewriter();if(typeof param==="number"&&param<1E9)param=Math.round(param*1E10)/1E10;param=param.toString();if(!param)return;this._SetText(this._text+param)},TypewriterText(param,duration){this._CancelTypewriter();if(typeof param==="number"&&param<1E9)param=Math.round(param*1E10)/1E10;this._StartTypewriter(param.toString(),
+duration)},SetFontFace(face,style){let bold=false;let italic=false;switch(style){case 1:bold=true;break;case 2:italic=true;break;case 3:bold=true;italic=true;break}if(face===this._faceName&&bold===this._isBold&&italic===this._isItalic)return;this._SetFontFace(face);this._SetBold(bold);this._SetItalic(italic)},SetFontSize(size){this._SetFontSize(size)},SetFontColor(rgb){tempColor.setFromRgbValue(rgb);tempColor.clamp();this._SetFontColor(tempColor)},SetWebFont(familyName,cssUrl){console.warn("[Text] 'Set web font' action is deprecated and no longer has any effect")},
+SetEffect(effect){this.GetWorldInfo().SetBlendMode(effect);this._runtime.UpdateRender()},TypewriterFinish(){this._FinishTypewriter()},SetLineHeight(lho){this._SetLineHeight(lho)},SetHAlign(h){this._SetHAlign(h)},SetVAlign(v){this._SetVAlign(v)},SetWrapping(w){this._SetWrapByWord(w===0)}};
+
+}
+
+{
+'use strict';const C3=self.C3;C3.Plugins.Text.Exps={Text(){return this._text},PlainText(){if(this._enableBBcode)return C3.BBString.StripAnyTags(this._text);else return this._text},FaceName(){return this._faceName},FaceSize(){return this._ptSize},TextWidth(){return this._GetTextWidth()},TextHeight(){return this._GetTextHeight()},LineHeight(){return this._lineHeightOffset}};
+
+}
+
+{
 'use strict';const C3=self.C3;C3.Behaviors.Tween=class TweenBehavior extends C3.SDKBehaviorBase{constructor(opts){super(opts)}Release(){super.Release()}};
 
 }
@@ -3954,6 +4014,58 @@ this._runtime.Random()*Math.PI*2;const d=this._runtime.Random()*mag;offX=Math.co
 }
 
 {
+'use strict';const C3=self.C3;C3.Behaviors.EightDir=class EightDirBehavior extends C3.SDKBehaviorBase{constructor(opts){super(opts)}Release(){super.Release()}};
+
+}
+
+{
+'use strict';const C3=self.C3;C3.Behaviors.EightDir.Type=class EightDirType extends C3.SDKBehaviorTypeBase{constructor(behaviorType){super(behaviorType)}Release(){super.Release()}OnCreate(){}};
+
+}
+
+{
+'use strict';const C3=self.C3;const C3X=self.C3X;const IBehaviorInstance=self.IBehaviorInstance;const MAX_SPEED=0;const ACCELERATION=1;const DEACCELERATION=2;const DIRECTION=3;const ANGLE_MODE=4;const DEFAULT_CONTROLS=5;const ENABLE=6;
+C3.Behaviors.EightDir.Instance=class EightDirInstance extends C3.SDKBehaviorInstanceBase{constructor(behInst,properties){super(behInst);this._upKey=false;this._downKey=false;this._leftKey=false;this._rightKey=false;this._ignoreInput=false;this._simUp=false;this._simDown=false;this._simLeft=false;this._simRight=false;this._dx=0;this._dy=0;this._maxSpeed=200;this._acc=600;this._dec=500;this._directions=3;this._angleMode=3;this._defaultControls=true;this._isEnabled=true;if(properties){this._maxSpeed=
+properties[MAX_SPEED];this._acc=properties[ACCELERATION];this._dec=properties[DEACCELERATION];this._directions=properties[DIRECTION];this._angleMode=properties[ANGLE_MODE];this._defaultControls=!!properties[DEFAULT_CONTROLS];this._isEnabled=!!properties[ENABLE]}if(this._isEnabled)this._StartTicking();if(this._defaultControls)this._BindEvents()}_BindEvents(){if(this._disposables)return;const rt=this._runtime.Dispatcher();this._disposables=new C3.CompositeDisposable(C3.Disposable.From(rt,"keydown",
+e=>this._OnKeyDown(e.data)),C3.Disposable.From(rt,"keyup",e=>this._OnKeyUp(e.data)),C3.Disposable.From(rt,"window-blur",()=>this._OnWindowOrKeyboardBlur()),C3.Disposable.From(rt,"keyboard-blur",()=>this._OnWindowOrKeyboardBlur()))}_UnBindEvents(){if(!this._disposables)return;this._disposables.Release();this._disposables=null}Release(){super.Release()}SaveToJson(){return{"dx":this._dx,"dy":this._dy,"e":this._isEnabled,"ms":this._maxSpeed,"acc":this._acc,"dec":this._dec,"d":this._directions,"am":this._angleMode,
+"dc":this._defaultControls,"ii":this._ignoreInput}}LoadFromJson(o){this._dx=o["dx"];this._dy=o["dy"];this._SetEnabled(o["e"]);this._maxSpeed=o["ms"];this._acc=o["acc"];this._dec=o["dec"];this._directions=o["d"];this._angleMode=o["am"];this._defaultControls=o["dc"];this._ignoreInput=o["ii"];this._upKey=false;this._downKey=false;this._leftKey=false;this._rightKey=false;this._simUp=false;this._simDown=false;this._simLeft=false;this._simRight=false;this._defaultControls?this._BindEvents():this._UnBindEvents()}_OnKeyDown(data){switch(data["key"]){case "ArrowLeft":this._leftKey=
+true;break;case "ArrowUp":this._upKey=true;break;case "ArrowRight":this._rightKey=true;break;case "ArrowDown":this._downKey=true;break}}_OnKeyUp(data){switch(data["key"]){case "ArrowLeft":this._leftKey=false;break;case "ArrowUp":this._upKey=false;break;case "ArrowRight":this._rightKey=false;break;case "ArrowDown":this._downKey=false;break}}_OnWindowOrKeyboardBlur(){this._upKey=false;this._downKey=false;this._leftKey=false;this._rightKey=false}Tick(){const dt=this._runtime.GetDt(this._inst);const collisionEngine=
+this._runtime.GetCollisionEngine();let left=this._leftKey||this._simLeft;let right=this._rightKey||this._simRight;let up=this._upKey||this._simUp;let down=this._downKey||this._simDown;this._simLeft=false;this._simRight=false;this._simUp=false;this._simDown=false;if(!this._isEnabled)return;let collInst=collisionEngine.TestOverlapSolid(this._inst);if(collInst){collisionEngine.RegisterCollision(this._inst,collInst);if(!collisionEngine.PushOutSolidNearest(this._inst))return}if(this._ignoreInput)left=
+right=up=down=false;if(this._directions===0)left=right=false;else if(this._directions===1)up=down=false;if(this._directions===2&&(up||down))left=right=false;if(left===right)if(this._dx<0)this._dx=Math.min(this._dx+this._dec*dt,0);else if(this._dx>0)this._dx=Math.max(this._dx-this._dec*dt,0);if(up===down)if(this._dy<0)this._dy=Math.min(this._dy+this._dec*dt,0);else if(this._dy>0)this._dy=Math.max(this._dy-this._dec*dt,0);let xacc=0;let yacc=0;if(left&&!right)if(this._dx>0)xacc=-(this._acc+this._dec);
+else xacc=-this._acc;if(right&&!left)if(this._dx<0)xacc=this._acc+this._dec;else xacc=this._acc;if(up&&!down)if(this._dy>0)yacc=-(this._acc+this._dec);else yacc=-this._acc;if(down&&!up)if(this._dy<0)yacc=this._acc+this._dec;else yacc=this._acc;this._dx+=xacc*dt;this._dy+=yacc*dt;if(this._dx!==0||this._dy!==0){const speed=Math.sqrt(this._dx*this._dx+this._dy*this._dy);const a=Math.atan2(this._dy,this._dx);const maxSpeedX=this._maxSpeed*Math.cos(a);const maxSpeedY=this._maxSpeed*Math.sin(a);if(speed>
+this._maxSpeed){this._dx=maxSpeedX;this._dy=maxSpeedY}const maxStepX=Math.abs(maxSpeedX)*dt;const maxStepY=Math.abs(maxSpeedY)*dt;const wi=this._inst.GetWorldInfo();const oldX=wi.GetX();const oldY=wi.GetY();const oldAngle=wi.GetAngle();const offX=C3.clamp(this._dx*dt+.5*xacc*dt*dt,-maxStepX,maxStepX);wi.OffsetX(offX);wi.SetBboxChanged();collInst=collisionEngine.TestOverlapSolid(this._inst);if(collInst){if(!collisionEngine.PushOutSolid(this._inst,this._dx<0?1:-1,0,Math.max(Math.abs(Math.floor(offX)),
+1))){wi.SetX(oldX);wi.SetBboxChanged()}this._dx=0;collisionEngine.RegisterCollision(this._inst,collInst)}const offY=C3.clamp(this._dy*dt+.5*yacc*dt*dt,-maxStepY,maxStepY);wi.OffsetY(offY);wi.SetBboxChanged();collInst=collisionEngine.TestOverlapSolid(this._inst);if(collInst){if(!collisionEngine.PushOutSolid(this._inst,0,this._dy<0?1:-1,Math.max(Math.abs(Math.floor(offY)),1))){wi.SetY(oldY);wi.SetBboxChanged()}this._dy=0;collisionEngine.RegisterCollision(this._inst,collInst)}const ax=C3.round6dp(this._dx);
+const ay=C3.round6dp(this._dy);if((ax!==0||ay!==0)&&this._inst.GetPlugin().IsRotatable())if(this._angleMode===1)wi.SetAngle(C3.toRadians(Math.round(C3.toDegrees(Math.atan2(ay,ax))/90)*90));else if(this._angleMode===2)wi.SetAngle(C3.toRadians(Math.round(C3.toDegrees(Math.atan2(ay,ax))/45)*45));else if(this._angleMode===3)wi.SetAngle(Math.atan2(ay,ax));wi.SetBboxChanged();if(wi.GetAngle()!=oldAngle){collInst=collisionEngine.TestOverlapSolid(this._inst);if(collInst){wi.SetAngle(oldAngle);wi.SetBboxChanged();
+collisionEngine.RegisterCollision(this._inst,collInst)}}}}GetPropertyValueByIndex(index){switch(index){case MAX_SPEED:return this._GetMaxSpeed();case ACCELERATION:return this._GetAcceleration();case DEACCELERATION:return this._GetDeceleration();case DIRECTION:return this._directions;case ANGLE_MODE:return this._angleMode;case DEFAULT_CONTROLS:return this._IsDefaultControls();case ENABLE:return this._IsEnabled()}}SetPropertyValueByIndex(index,value){switch(index){case MAX_SPEED:this._SetMaxSpeed(value);
+break;case ACCELERATION:this._SetAcceleration(value);break;case DEACCELERATION:this._SetDeceleration(value);break;case DIRECTION:this._directions=value;break;case ANGLE_MODE:this._angleMode=value;break;case DEFAULT_CONTROLS:this._SetDefaultControls(!!value);break;case ENABLE:this._SetEnabled(!!value);break}}_Stop(){this._dx=0;this._dy=0}_Reverse(){this._dx*=-1;this._dy*=-1}_MaybeClampSpeed(){const speed=Math.hypot(this._dx,this._dy);if(speed>this._maxSpeed)this._SetSpeed(speed)}_SetSpeed(speed){speed=
+C3.clamp(speed,0,this._maxSpeed);const a=Math.atan2(this._dy,this._dx);this._dx=speed*Math.cos(a);this._dy=speed*Math.sin(a)}_GetSpeed(){return Math.hypot(this._dx,this._dy)}_SetMaxSpeed(maxSpeed){this._maxSpeed=Math.max(maxSpeed,0)}_GetMaxSpeed(){return this._maxSpeed}_SetAcceleration(acc){this._acc=Math.max(acc,0)}_GetAcceleration(){return this._acc}_SetDeceleration(dec){this._dec=Math.max(dec,0)}_GetDeceleration(){return this._dec}_GetMovingAngle(){return Math.atan2(this._dy,this._dx)}_SetVectorX(x){this._dx=
+x;this._MaybeClampSpeed()}_GetVectorX(){return this._dx}_SetVectorY(y){this._dy=y;this._MaybeClampSpeed()}_GetVectorY(){return this._dy}_SimulateControl(ctrl){if(!this._isEnabled)return;switch(ctrl){case 0:this._simLeft=true;break;case 1:this._simRight=true;break;case 2:this._simUp=true;break;case 3:this._simDown=true;break}}_SetDefaultControls(d){d=!!d;if(this._defaultControls===d)return;this._defaultControls=d;if(this._defaultControls)this._BindEvents();else{this._UnBindEvents();this._OnWindowOrKeyboardBlur()}}_IsDefaultControls(){return this._defaultControls}_SetIgnoreInput(ignore){this._ignoreInput=
+!!ignore}_IsIgnoreInput(){return this._ignoreInput}_SetEnabled(e){this._isEnabled=!!e;if(this._isEnabled)this._StartTicking();else{this._simLeft=false;this._simRight=false;this._simUp=false;this._simDown=false;this._StopTicking()}}_IsEnabled(){return this._isEnabled}GetDebuggerProperties(){const prefix="behaviors.eightdir";return[{title:"$"+this.GetBehaviorType().GetName(),properties:[{name:prefix+".debugger.vector-x",value:this._GetVectorX(),onedit:v=>this._SetVectorX(v)},{name:prefix+".debugger.vector-y",
+value:this._GetVectorY(),onedit:v=>this._SetVectorY(v)},{name:prefix+".debugger.speed",value:this._GetSpeed(),onedit:v=>this._SetSpeed(v)},{name:prefix+".debugger.angle-of-motion",value:C3.toDegrees(this._GetMovingAngle())},{name:prefix+".properties.max-speed.name",value:this._GetMaxSpeed(),onedit:v=>this._SetMaxSpeed(v)},{name:prefix+".properties.acceleration.name",value:this._GetAcceleration(),onedit:v=>this._SetAcceleration(v)},{name:prefix+".properties.deceleration.name",value:this._GetDeceleration(),
+onedit:v=>this._SetDeceleration(v)},{name:prefix+".properties.enabled.name",value:this._IsEnabled(),onedit:v=>this._SetEnabled(v)}]}]}GetScriptInterfaceClass(){return self.I8DirectionBehaviorInstance}};const map=new WeakMap;const SIMULATE_CONTROL_MAP=new Map([["left",0],["right",1],["up",2],["down",3]]);
+self.I8DirectionBehaviorInstance=class I8DirectionBehaviorInstance extends IBehaviorInstance{constructor(){super();map.set(this,IBehaviorInstance._GetInitInst().GetSdkInstance())}stop(){map.get(this)._Stop()}reverse(){map.get(this)._Reverse()}simulateControl(ctrl){C3X.RequireString(ctrl);const index=SIMULATE_CONTROL_MAP.get(ctrl);if(typeof index!=="number")throw new Error("invalid control");map.get(this)._SimulateControl(index)}get speed(){return map.get(this)._GetSpeed()}set speed(s){C3X.RequireFiniteNumber(s);
+map.get(this)._SetSpeed(s)}get maxSpeed(){return map.get(this)._GetMaxSpeed()}set maxSpeed(s){C3X.RequireFiniteNumber(s);map.get(this)._SetMaxSpeed(s)}get acceleration(){return map.get(this)._GetAcceleration()}set acceleration(a){C3X.RequireFiniteNumber(a);map.get(this)._SetAcceleration(a)}get deceleration(){return map.get(this)._GetDeceleration()}set deceleration(d){C3X.RequireFiniteNumber(d);map.get(this)._SetDeceleration(d)}get vectorX(){return map.get(this)._GetVectorX()}set vectorX(x){C3X.RequireFiniteNumber(x);
+map.get(this)._SetVectorX(x)}get vectorY(){return map.get(this)._GetVectorY()}set vectorY(y){C3X.RequireFiniteNumber(y);map.get(this)._SetVectorX(y)}get isDefaultControls(){return map.get(this)._IsDefaultControls()}set isDefaultControls(d){map.get(this)._SetDefaultControls(!!d)}get isIgnoringInput(){return map.get(this)._IsIgnoreInput()}set isIgnoringInput(e){map.get(this)._SetIgnoreInput(!!e)}get isEnabled(){return map.get(this)._IsEnabled()}set isEnabled(e){map.get(this)._SetEnabled(!!e)}};
+
+}
+
+{
+'use strict';const C3=self.C3;C3.Behaviors.EightDir.Cnds={IsMoving(){return this._GetSpeed()>1E-10},CompareSpeed(cmp,s){return C3.compare(this._GetSpeed(),cmp,s)},IsEnabled(){return this._IsEnabled()}};
+
+}
+
+{
+'use strict';const C3=self.C3;
+C3.Behaviors.EightDir.Acts={Stop(){this._Stop()},Reverse(){this._Reverse()},SetIgnoreInput(ignore){this._SetIgnoreInput(ignore)},SetSpeed(speed){this._SetSpeed(speed)},SetMaxSpeed(maxSpeed){this._SetMaxSpeed(maxSpeed)},SetAcceleration(acc){this._SetAcceleration(acc)},SetDeceleration(dec){this._SetDeceleration(dec)},SimulateControl(ctrl){this._SimulateControl(ctrl)},SetEnabled(e){this._SetEnabled(e)},SetVectorX(x){this._SetVectorX(x)},SetVectorY(y){this._SetVectorY(y)},SetDefaultControls(d){this._SetDefaultControls(!!d)}};
+
+}
+
+{
+'use strict';const C3=self.C3;C3.Behaviors.EightDir.Exps={Speed(){return this._GetSpeed()},MaxSpeed(){return this._GetMaxSpeed()},Acceleration(){return this._GetAcceleration()},Deceleration(){return this._GetDeceleration()},MovingAngle(){return C3.toDegrees(this._GetMovingAngle())},VectorX(){return this._GetVectorX()},VectorY(){return this._GetVectorY()}};
+
+}
+
+{
 'use strict';const C3=self.C3;
 C3.Behaviors.DragnDrop=class DragnDropBehavior extends C3.SDKBehaviorBase{constructor(opts){super(opts);const rt=this._runtime.Dispatcher();this._disposables=new C3.CompositeDisposable(C3.Disposable.From(rt,"pointerdown",e=>this._OnPointerDown(e.data)),C3.Disposable.From(rt,"pointermove",e=>this._OnPointerMove(e.data)),C3.Disposable.From(rt,"pointerup",e=>this._OnPointerUp(e.data,false)),C3.Disposable.From(rt,"pointercancel",e=>this._OnPointerUp(e.data,true)))}Release(){this._disposables.Release();this._disposables=
 null;super.Release()}_OnPointerDown(e){if(e["pointerType"]==="mouse"&&e["button"]!==0)return;this._OnInputDown(e["pointerId"].toString(),e["pageX"]-this._runtime.GetCanvasClientX(),e["pageY"]-this._runtime.GetCanvasClientY())}_OnPointerMove(e){if((e["lastButtons"]&1)!==0&&(e["buttons"]&1)===0)this._OnInputUp(e["pointerId"].toString());else this._OnInputMove(e["pointerId"].toString(),e["pageX"]-this._runtime.GetCanvasClientX(),e["pageY"]-this._runtime.GetCanvasClientY())}_OnPointerUp(e,isCancel){if(e["pointerType"]===
@@ -4030,6 +4142,89 @@ value;break;case DESTROY:this._destroy=!!value;break}}GetDebuggerProperties(){co
 }
 
 {
+'use strict';const C3=self.C3;C3.Behaviors.Bullet=class BulletBehavior extends C3.SDKBehaviorBase{constructor(opts){super(opts)}Release(){super.Release()}};
+
+}
+
+{
+'use strict';const C3=self.C3;C3.Behaviors.Bullet.Type=class BulletType extends C3.SDKBehaviorTypeBase{constructor(behaviorType){super(behaviorType)}Release(){super.Release()}OnCreate(){}};
+
+}
+
+{
+'use strict';const C3=self.C3;const C3X=self.C3X;const IBehaviorInstance=self.IBehaviorInstance;const SPEED=0;const ACCELERATION=1;const GRAVITY=2;const BOUNCE_OFF_SOLIDS=3;const SET_ANGLE=4;const STEPPING=5;const ENABLE=6;
+C3.Behaviors.Bullet.Instance=class BulletInstance extends C3.SDKBehaviorInstanceBase{constructor(behInst,properties){super(behInst);const wi=this.GetWorldInfo();this._speed=0;this._acc=0;this._g=0;this._bounceOffSolid=false;this._setAngle=false;this._isStepping=false;this._isEnabled=true;this._dx=0;this._dy=0;this._lastX=wi.GetX();this._lastY=wi.GetY();this._lastKnownAngle=wi.GetAngle();this._travelled=0;this._stepSize=Math.min(Math.abs(wi.GetWidth()),Math.abs(wi.GetHeight())/2);this._stopStepping=
+false;if(properties){this._speed=properties[SPEED];this._acc=properties[ACCELERATION];this._g=properties[GRAVITY];this._bounceOffSolid=!!properties[BOUNCE_OFF_SOLIDS];this._setAngle=!!properties[SET_ANGLE];this._isStepping=!!properties[STEPPING];this._isEnabled=!!properties[ENABLE]}const a=wi.GetAngle();this._dx=Math.cos(a)*this._speed;this._dy=Math.sin(a)*this._speed;if(this._isEnabled){this._StartTicking();if(this._bounceOffSolid)this._StartPostTicking()}}Release(){super.Release()}SaveToJson(){const o=
+{"dx":this._dx,"dy":this._dy,"lx":this._lastX,"ly":this._lastY,"lka":this._lastKnownAngle,"t":this._travelled};if(this._acc!==0)o["acc"]=this._acc;if(this._g!==0)o["g"]=this._g;if(this._isStepping)o["st"]=this._isStepping;if(!this._isEnabled)o["e"]=this._isEnabled;if(this._bounceOffSolid)o["bos"]=this._bounceOffSolid;if(this._setAngle)o["sa"]=this._setAngle;return o}LoadFromJson(o){this._dx=o["dx"];this._dy=o["dy"];this._lastX=o["lx"];this._lastY=o["ly"];this._lastKnownAngle=o["lka"];this._travelled=
+o["t"];this._acc=o.hasOwnProperty("acc")?o["acc"]:0;this._g=o.hasOwnProperty("g")?o["g"]:0;this._isStepping=o.hasOwnProperty("st")?o["st"]:false;this._bounceOffSolid=o.hasOwnProperty("bos")?o["bos"]:false;this._setAngle=o.hasOwnProperty("sa")?o["sa"]:false;this._SetEnabled(o.hasOwnProperty("e")?o["e"]:true)}Tick(){if(!this._isEnabled)return;const dt=this._runtime.GetDt(this._inst);const wi=this._inst.GetWorldInfo();if(wi.GetAngle()!==this._lastKnownAngle){const angle=wi.GetAngle();if(this._setAngle){const s=
+C3.distanceTo(0,0,this._dx,this._dy);this._dx=Math.cos(angle)*s;this._dy=Math.sin(angle)*s}this._lastKnownAngle=angle}let xacc=0;let yacc=0;if(this._acc!==0){let s=C3.distanceTo(0,0,this._dx,this._dy);let a=0;if(this._dx===0&&this._dy===0)a=wi.GetAngle();else a=C3.angleTo(0,0,this._dx,this._dy);s+=this._acc*dt;xacc=Math.cos(a)*this._acc;yacc=Math.sin(a)*this._acc;if(s<0){s=0;xacc=0;yacc=0}this._dx=Math.cos(a)*s;this._dy=Math.sin(a)*s}if(this._g!==0){this._dy+=this._g*dt;yacc+=this._g}this._lastX=
+wi.GetX();this._lastY=wi.GetY();if(this._dx!==0||this._dy!==0){const mx=this._dx*dt+.5*xacc*dt*dt;const my=this._dy*dt+.5*yacc*dt*dt;const stepDist=C3.distanceTo(0,0,mx,my);this._MoveBy(mx,my,stepDist);this._travelled+=stepDist;if(this._setAngle&&(mx!==0||my!==0)){const a=C3.angleTo(0,0,mx,my);wi.SetAngle(a);this._lastKnownAngle=wi.GetAngle()}wi.SetBboxChanged()}}_MoveBy(mx,my,stepDist){const wi=this.GetWorldInfo();if(!this._isStepping||stepDist<=this._stepSize){wi.OffsetXY(mx,my);wi.SetBboxChanged();
+if(this._isStepping)this.Trigger(C3.Behaviors.Bullet.Cnds.OnStep);return}this._stopStepping=false;const startX=wi.GetX();const startY=wi.GetY();const endX=startX+mx;const endY=startY+my;const a=C3.angleTo(0,0,mx,my);const stepX=Math.cos(a)*this._stepSize;const stepY=Math.sin(a)*this._stepSize;const stepCount=Math.floor(stepDist/this._stepSize);for(let i=1;i<=stepCount;++i){wi.SetXY(startX+stepX*i,startY+stepY*i);wi.SetBboxChanged();this.Trigger(C3.Behaviors.Bullet.Cnds.OnStep);if(this._inst.IsDestroyed()||
+this._stopStepping)return}wi.SetXY(endX,endY);wi.SetBboxChanged();this.Trigger(C3.Behaviors.Bullet.Cnds.OnStep)}PostTick(){if(!this._isEnabled||!this._bounceOffSolid||this._dx===0&&this._dy===0)return;const dt=this._runtime.GetDt(this._inst);const wi=this._inst.GetWorldInfo();const collisionEngine=this._runtime.GetCollisionEngine();const bounceSolid=collisionEngine.TestOverlapSolid(this._inst);if(bounceSolid){collisionEngine.RegisterCollision(this._inst,bounceSolid);const s=C3.distanceTo(0,0,this._dx,
+this._dy);const bounceAngle=collisionEngine.CalculateBounceAngle(this._inst,this._lastX,this._lastY);this._dx=Math.cos(bounceAngle)*s;this._dy=Math.sin(bounceAngle)*s;wi.OffsetXY(this._dx*dt,this._dy*dt);wi.SetBboxChanged();if(this._setAngle){wi.SetAngle(bounceAngle);this._lastKnownAngle=wi.GetAngle();wi.SetBboxChanged()}if(!collisionEngine.PushOutSolid(this._inst,this._dx/s,this._dy/s,Math.max(s*2.5*dt,30)))collisionEngine.PushOutSolidNearest(this._inst,100)}}GetPropertyValueByIndex(index){switch(index){case SPEED:return this._GetSpeed();
+case ACCELERATION:return this._GetAcceleration();case GRAVITY:return this._GetGravity();case SET_ANGLE:return this._setAngle;case STEPPING:return this._isStepping;case ENABLE:return this._IsEnabled()}}SetPropertyValueByIndex(index,value){switch(index){case SPEED:this._SetSpeed(value);break;case ACCELERATION:this._acc=value;break;case GRAVITY:this._g=value;break;case SET_ANGLE:this._setAngle=!!value;break;case STEPPING:this._isStepping=!!value;break;case ENABLE:this._SetEnabled(!!value);break}}_SetSpeed(s){const a=
+C3.angleTo(0,0,this._dx,this._dy);this._dx=Math.cos(a)*s;this._dy=Math.sin(a)*s}_GetSpeed(){return C3.round6dp(C3.distanceTo(0,0,this._dx,this._dy))}_SetAcceleration(a){this._acc=a}_GetAcceleration(){return this._acc}_SetGravity(g){this._g=g}_GetGravity(){return this._g}_SetAngleOfMotion(a){const s=C3.distanceTo(0,0,this._dx,this._dy);this._dx=Math.cos(a)*s;this._dy=Math.sin(a)*s}_GetAngleOfMotion(){return C3.angleTo(0,0,this._dx,this._dy)}_SetBounceOffSolids(b){b=!!b;if(this._bounceOffSolid===b)return;
+this._bounceOffSolid=b;if(this._isEnabled)if(this._bounceOffSolid)this._StartPostTicking();else this._StopPostTicking()}_IsBounceOffSolids(){return this._bounceOffSolid}_SetDistanceTravelled(d){this._travelled=d}_GetDistanceTravelled(){return this._travelled}_SetEnabled(e){this._isEnabled=!!e;if(this._isEnabled){this._StartTicking();if(this._bounceOffSolid)this._StartPostTicking()}else{this._StopTicking();this._StopPostTicking()}}_IsEnabled(){return this._isEnabled}GetDebuggerProperties(){const prefix=
+"behaviors.bullet";return[{title:"$"+this.GetBehaviorType().GetName(),properties:[{name:prefix+".debugger.vector-x",value:this._dx,onedit:v=>this._dx=v},{name:prefix+".debugger.vector-y",value:this._dy,onedit:v=>this._dy=v},{name:prefix+".properties.speed.name",value:this._GetSpeed(),onedit:v=>this._SetSpeed(v)},{name:prefix+".debugger.angle-of-motion",value:C3.toDegrees(this._GetAngleOfMotion())},{name:prefix+".properties.gravity.name",value:this._GetGravity(),onedit:v=>this._SetGravity(v)},{name:prefix+
+".properties.acceleration.name",value:this._GetAcceleration(),onedit:v=>this._SetAcceleration(v)},{name:prefix+".debugger.distance-travelled",value:this._GetDistanceTravelled()},{name:prefix+".properties.enabled.name",value:this._IsEnabled(),onedit:v=>this._SetEnabled(v)}]}]}GetScriptInterfaceClass(){return self.IBulletBehaviorInstance}};const map=new WeakMap;
+self.IBulletBehaviorInstance=class IBulletBehaviorInstance extends IBehaviorInstance{constructor(){super();map.set(this,IBehaviorInstance._GetInitInst().GetSdkInstance())}get speed(){return map.get(this)._GetSpeed()}set speed(s){C3X.RequireFiniteNumber(s);map.get(this)._SetSpeed(s)}get acceleration(){return map.get(this)._GetAcceleration()}set acceleration(a){C3X.RequireFiniteNumber(a);map.get(this)._SetAcceleration(a)}get gravity(){return map.get(this)._GetGravity()}set gravity(g){C3X.RequireFiniteNumber(g);
+map.get(this)._SetGravity(g)}get angleOfMotion(){return map.get(this)._GetAngleOfMotion()}set angleOfMotion(a){C3X.RequireFiniteNumber(a);map.get(this)._SetAngleOfMotion(a)}get bounceOffSolids(){return map.get(this)._IsBounceOffSolids()}set bounceOffSolids(b){map.get(this)._SetBounceOffSolids(!!b)}get distanceTravelled(){return map.get(this)._GetDistanceTravelled()}set distanceTravelled(d){C3X.RequireFiniteNumber(d);map.get(this)._SetDistanceTravelled(d)}get isEnabled(){return map.get(this)._IsEnabled()}set isEnabled(e){map.get(this)._SetEnabled(e)}};
+
+}
+
+{
+'use strict';const C3=self.C3;C3.Behaviors.Bullet.Cnds={CompareSpeed(cmp,s){const speed=Math.sqrt(this._dx*this._dx+this._dy*this._dy);return C3.compare(speed,cmp,s)},CompareTravelled(cmp,d){return C3.compare(this._GetDistanceTravelled(),cmp,d)},OnStep(){return true},IsEnabled(){return this._IsEnabled()}};
+
+}
+
+{
+'use strict';const C3=self.C3;
+C3.Behaviors.Bullet.Acts={SetSpeed(s){this._SetSpeed(s)},SetAcceleration(a){this._SetAcceleration(a)},SetGravity(g){this._SetGravity(g)},SetAngleOfMotion(a){this._SetAngleOfMotion(C3.toRadians(a))},Bounce(objectClass){if(!objectClass)return;const otherInst=objectClass.GetFirstPicked(this._inst);if(!otherInst)return;const wi=this._inst.GetWorldInfo();const collisionEngine=this._runtime.GetCollisionEngine();const dt=this._runtime.GetDt(this._inst);const s=C3.distanceTo(0,0,this._dx,this._dy);const bounceAngle=
+collisionEngine.CalculateBounceAngle(this._inst,this._lastX,this._lastY,otherInst);this._dx=Math.cos(bounceAngle)*s;this._dy=Math.sin(bounceAngle)*s;wi.OffsetXY(this._dx*dt,this._dy*dt);wi.SetBboxChanged();if(this._setAngle){wi.SetAngle(bounceAngle);this._lastKnownAngle=wi.GetAngle();wi.SetBboxChanged()}if(s!==0)if(this._bounceOffSolid){if(!collisionEngine.PushOutSolid(this._inst,this._dx/s,this._dy/s,Math.max(s*2.5*dt,30)))collisionEngine.PushOutSolidNearest(this._inst,100)}else collisionEngine.PushOut(this._inst,
+this._dx/s,this._dy/s,Math.max(s*2.5*dt,30),otherInst)},SetBounceOffSolids(b){this._SetBounceOffSolids(b)},SetDistanceTravelled(d){this._SetDistanceTravelled(d)},SetEnabled(e){this._SetEnabled(e)},StopStepping(){this._stopStepping=true}};
+
+}
+
+{
+'use strict';const C3=self.C3;C3.Behaviors.Bullet.Exps={Speed(){return this._GetSpeed()},Acceleration(){return this._GetAcceleration()},AngleOfMotion(){return C3.toDegrees(this._GetAngleOfMotion())},DistanceTravelled(){return this._GetDistanceTravelled()},Gravity(){return this._GetGravity()}};
+
+}
+
+{
+'use strict';const C3=self.C3;C3.Behaviors.Rotate=class RotateBehavior extends C3.SDKBehaviorBase{constructor(opts){super(opts)}Release(){super.Release()}};
+
+}
+
+{
+'use strict';const C3=self.C3;C3.Behaviors.Rotate.Type=class RotateType extends C3.SDKBehaviorTypeBase{constructor(objectClass){super(objectClass)}Release(){super.Release()}OnCreate(){}};
+
+}
+
+{
+'use strict';const C3=self.C3;const SPEED=0;const ACCELERATION=1;const ENABLE=2;
+C3.Behaviors.Rotate.Instance=class RotateInstance extends C3.SDKBehaviorInstanceBase{constructor(inst,properties){super(inst);this._speed=0;this._acceleration=0;this._isEnabled=true;if(properties){this._speed=C3.toRadians(properties[SPEED]);this._acceleration=C3.toRadians(properties[ACCELERATION]);this._isEnabled=properties[ENABLE]}if(this._isEnabled)this._StartTicking()}Release(){super.Release()}SaveToJson(){return{"s":this._speed,"a":this._acceleration,"e":this._isEnabled}}LoadFromJson(o){this._speed=
+o["s"];this._acceleration=o["a"];this._SetEnabled(o["e"])}Tick(){if(!this._isEnabled)return;const dt=this._runtime.GetDt(this._inst);if(dt===0)return;if(this._acceleration!==0)this._speed+=this._acceleration*dt;if(this._speed!==0){const wi=this._inst.GetWorldInfo();wi.SetAngle(wi.GetAngle()+this._speed*dt);wi.SetBboxChanged()}}GetPropertyValueByIndex(index){switch(index){case SPEED:return C3.toDegrees(this._speed);case ACCELERATION:return C3.toDegrees(this._acceleration);case ENABLE:return this._isEnabled}}SetPropertyValueByIndex(index,
+value){switch(index){case SPEED:this._speed=C3.toRadians(value);break;case ACCELERATION:this._acceleration=C3.toRadians(value);break;case ENABLE:this._SetEnabled(value);break}}_SetEnabled(e){this._isEnabled=!!e;if(this._isEnabled)this._StartTicking();else this._StopTicking()}GetDebuggerProperties(){const prefix="behaviors.rotate";return[{title:"$"+this.GetBehaviorType().GetName(),properties:[{name:prefix+".properties.speed.name",value:C3.toDegrees(this._speed),onedit:v=>this._speed=C3.toRadians(v)},
+{name:prefix+".properties.acceleration.name",value:C3.toDegrees(this._acceleration),onedit:v=>this._acceleration=C3.toRadians(v)},{name:prefix+".properties.enabled.name",value:this._isEnabled,onedit:v=>this._SetEnabled(v)}]}]}};
+
+}
+
+{
+'use strict';const C3=self.C3;C3.Behaviors.Rotate.Cnds={IsEnabled(){return this._isEnabled}};
+
+}
+
+{
+'use strict';const C3=self.C3;C3.Behaviors.Rotate.Acts={SetSpeed(s){this._speed=C3.toRadians(s)},SetAcceleration(a){this._acceleration=C3.toRadians(a)},SetEnabled(e){this._SetEnabled(e)}};
+
+}
+
+{
+'use strict';const C3=self.C3;C3.Behaviors.Rotate.Exps={Speed(){return C3.toDegrees(this._speed)},Acceleration(){return C3.toDegrees(this._acceleration)}};
+
+}
+
+{
 const C3 = self.C3;
 self.C3_GetObjectRefTable = function () {
 	return [
@@ -4037,6 +4232,7 @@ self.C3_GetObjectRefTable = function () {
 		C3.Behaviors.Tween,
 		C3.Behaviors.Sin,
 		C3.Behaviors.scrollto,
+		C3.Behaviors.EightDir,
 		C3.Plugins.Touch,
 		C3.Plugins.Mouse,
 		C3.Behaviors.DragnDrop,
@@ -4045,6 +4241,9 @@ self.C3_GetObjectRefTable = function () {
 		C3.Behaviors.Fade,
 		C3.Plugins.Particles,
 		C3.Plugins.Audio,
+		C3.Behaviors.Bullet,
+		C3.Behaviors.Rotate,
+		C3.Plugins.Text,
 		C3.Plugins.System.Cnds.OnLayoutStart,
 		C3.Plugins.Sprite.Acts.SetInstanceVar,
 		C3.Plugins.Sprite.Exps.X,
@@ -4054,7 +4253,10 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.System.Exps.viewportright,
 		C3.Plugins.System.Exps.viewportbottom,
 		C3.Plugins.Particles.Acts.Destroy,
-		C3.Plugins.Sprite.Acts.SetEffectEnabled,
+		C3.Plugins.Audio.Acts.Preload,
+		C3.Plugins.Audio.Cnds.PreloadsComplete,
+		C3.Plugins.System.Cnds.TriggerOnce,
+		C3.Plugins.Audio.Acts.Play,
 		C3.Plugins.System.Cnds.IsGroupActive,
 		C3.Plugins.Sprite.Cnds.CompareX,
 		C3.Plugins.Sprite.Exps.Width,
@@ -4063,6 +4265,9 @@ self.C3_GetObjectRefTable = function () {
 		C3.Behaviors.DragnDrop.Acts.SetEnabled,
 		C3.Behaviors.DragnDrop.Cnds.OnDragStart,
 		C3.Plugins.Sprite.Cnds.IsOverlapping,
+		C3.Plugins.Sprite.Acts.SetSize,
+		C3.Plugins.Sprite.Exps.ImageWidth,
+		C3.Plugins.Sprite.Exps.ImageHeight,
 		C3.Plugins.Sprite.Acts.RemoveFromParent,
 		C3.Plugins.Sprite.Acts.RemoveChild,
 		C3.Plugins.Sprite.Acts.MoveToLayer,
@@ -4071,9 +4276,6 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.System.Acts.Wait,
 		C3.Behaviors.DragnDrop.Cnds.OnDrop,
 		C3.Plugins.Sprite.Acts.Destroy,
-		C3.Plugins.Sprite.Acts.SetSize,
-		C3.Plugins.Sprite.Exps.ImageWidth,
-		C3.Plugins.Sprite.Exps.ImageHeight,
 		C3.Plugins.Mouse.Cnds.OnObjectClicked,
 		C3.Plugins.Sprite.Acts.SetAngle,
 		C3.Plugins.Sprite.Exps.Angle,
@@ -4101,11 +4303,28 @@ self.C3_GetObjectRefTable = function () {
 		C3.Behaviors.Tween.Cnds.OnTweensFinished,
 		C3.Plugins.System.Acts.SetLayoutAngle,
 		C3.Plugins.System.Acts.SetLayoutScale,
+		C3.Behaviors.EightDir.Acts.SetEnabled,
+		C3.Plugins.System.Acts.SetGroupActive,
+		C3.Plugins.Keyboard.Cnds.IsKeyDown,
+		C3.Behaviors.EightDir.Acts.SimulateControl,
+		C3.Plugins.System.Cnds.Every,
+		C3.Plugins.System.Exps.random,
+		C3.Behaviors.Bullet.Acts.SetSpeed,
+		C3.Behaviors.Rotate.Acts.SetSpeed,
+		C3.Behaviors.Bullet.Acts.SetAngleOfMotion,
+		C3.Plugins.Sprite.Acts.SetAnimFrame,
+		C3.Plugins.System.Exps.int,
+		C3.Plugins.Sprite.Exps.AnimationFrameCount,
 		C3.Plugins.Touch.Cnds.OnTouchObject,
 		C3.Plugins.System.Cnds.LayerVisible,
-		C3.Plugins.System.Acts.GoToLayout,
+		C3.Plugins.Mouse.Cnds.IsOverObject,
+		C3.Plugins.Text.Acts.SetVisible,
+		C3.Plugins.Text.Acts.SetText,
+		C3.Plugins.System.Exps.tokenat,
+		C3.Plugins.System.Exps.tokencount,
 		C3.Behaviors.DragnDrop.Cnds.IsDragging,
-		C3.Plugins.System.Acts.SetVar
+		C3.Plugins.System.Acts.SetVar,
+		C3.Plugins.System.Acts.GoToLayout
 	];
 };
 self.C3_JsPropNameTable = [
@@ -4116,6 +4335,7 @@ self.C3_JsPropNameTable = [
 	{Sine: 0},
 	{Sine2: 0},
 	{ScrollTo: 0},
+	{"8Direction": 0},
 	{Pole: 0},
 	{Sprite5: 0},
 	{backMatalka: 0},
@@ -4158,11 +4378,31 @@ self.C3_JsPropNameTable = [
 	{slideSound2: 0},
 	{back: 0},
 	{Audio: 0},
+	{Bullet: 0},
+	{Rotate: 0},
 	{Asteroid: 0},
+	{MuneButton: 0},
+	{SoundButton: 0},
+	{Sprite4: 0},
+	{конец: 0},
+	{Sprite7: 0},
+	{d2: 0},
+	{авторы: 0},
+	{Texts: 0},
+	{ob1: 0},
+	{d1: 0},
+	{ob3: 0},
+	{d3: 0},
+	{ob5: 0},
+	{d4: 0},
+	{Слой7: 0},
+	{Text: 0},
 	{Family1: 0},
 	{Dvig: 0},
-	{Family2: 0},
+	{Boutton: 0},
 	{slide: 0},
+	{Dd: 0},
+	{Oblaka: 0},
 	{Variable1: 0},
 	{sOUND: 0},
 	{mUSIC: 0}
@@ -4274,8 +4514,11 @@ self.C3_ExpressionFuncs = [
 			const f0 = p._GetNode(0).GetBoundMethod();
 			return () => (f0("Layer 3") / 2);
 		},
-		() => "Outline",
-		() => "Outline2",
+		p => {
+			const v0 = p._GetNode(0).GetVar();
+			return () => ((-20) + v0.GetValue());
+		},
+		() => "",
 		() => "Slide",
 		p => {
 			const n0 = p._GetNode(0);
@@ -4309,9 +4552,14 @@ self.C3_ExpressionFuncs = [
 		() => 0,
 		() => "Construct",
 		p => {
+			const v0 = p._GetNode(0).GetVar();
+			return () => ((-15) + v0.GetValue());
+		},
+		p => {
 			const n0 = p._GetNode(0);
 			return () => (n0.ExpObject() + 90);
 		},
+		() => "StartFLy",
 		() => "Layer 2",
 		() => "1",
 		() => 2,
@@ -4371,15 +4619,67 @@ self.C3_ExpressionFuncs = [
 			const n0 = p._GetNode(0);
 			return () => n0.ExpBehavior("SScale");
 		},
-		() => "",
+		() => "SMove2",
 		p => {
 			const n0 = p._GetNode(0);
 			return () => (n0.ExpObject() - 321);
 		},
 		() => 3,
+		() => "Fly",
+		p => {
+			const f0 = p._GetNode(0).GetBoundMethod();
+			return () => f0(0.9, 3);
+		},
+		() => "UI",
+		p => {
+			const f0 = p._GetNode(0).GetBoundMethod();
+			const f1 = p._GetNode(1).GetBoundMethod();
+			const f2 = p._GetNode(2).GetBoundMethod();
+			return () => f0(f1("UI"), f2("UI"));
+		},
+		p => {
+			const f0 = p._GetNode(0).GetBoundMethod();
+			return () => (f0("UI") - 22);
+		},
+		p => {
+			const f0 = p._GetNode(0).GetBoundMethod();
+			return () => f0(60, 200);
+		},
+		p => {
+			const f0 = p._GetNode(0).GetBoundMethod();
+			return () => f0(60, (-60));
+		},
+		p => {
+			const f0 = p._GetNode(0).GetBoundMethod();
+			return () => f0(60, 120);
+		},
+		p => {
+			const f0 = p._GetNode(0).GetBoundMethod();
+			const f1 = p._GetNode(1).GetBoundMethod();
+			const n2 = p._GetNode(2);
+			return () => f0(f1(0, (n2.ExpObject() - 1)));
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			const v1 = p._GetNode(1).GetVar();
+			return () => (n0.ExpInstVar() + (v1.GetValue() * 2));
+		},
+		() => 0.2,
 		() => 0.86,
 		() => 0.1,
-		() => 0.2,
+		p => {
+			const v0 = p._GetNode(0).GetVar();
+			return () => ((-5) + v0.GetValue());
+		},
+		p => {
+			const f0 = p._GetNode(0).GetBoundMethod();
+			const n1 = p._GetNode(1);
+			const f2 = p._GetNode(2).GetBoundMethod();
+			const f3 = p._GetNode(3).GetBoundMethod();
+			const f4 = p._GetNode(4).GetBoundMethod();
+			const n5 = p._GetNode(5);
+			return () => f0(n1.ExpInstVar_Family(), f2(f3(0, f4(n5.ExpInstVar_Family(), "|"))), "|");
+		},
 		p => {
 			const n0 = p._GetNode(0);
 			const n1 = p._GetNode(1);
@@ -4393,7 +4693,7 @@ self.C3_ExpressionFuncs = [
 		p => {
 			const n0 = p._GetNode(0);
 			const n1 = p._GetNode(1);
-			return () => ((n0.ExpObject() - n1.ExpInstVar()) / 5);
+			return () => ((n0.ExpObject() - n1.ExpInstVar()) / 2);
 		}
 ];
 
