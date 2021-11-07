@@ -4420,6 +4420,7 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.Text,
 		C3.Plugins.LocalStorage,
 		C3.Plugins.System.Cnds.OnLayoutStart,
+		C3.Plugins.System.Acts.SetTimescale,
 		C3.Plugins.Sprite.Acts.SetInstanceVar,
 		C3.Plugins.Sprite.Exps.X,
 		C3.Behaviors.DragnDrop.Acts.SetEnabled,
@@ -4481,7 +4482,6 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.System.Acts.SetGroupActive,
 		C3.Plugins.System.Acts.SetLayerAngle,
 		C3.Plugins.System.Acts.SetLayerScale,
-		C3.Plugins.System.Acts.SetTimescale,
 		C3.Behaviors.Physics.Acts.SetEnabled,
 		C3.Behaviors.Physics.Acts.EnableCollisions,
 		C3.Behaviors.Physics.Acts.SetWorldGravity,
@@ -4497,10 +4497,13 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.System.Exps.int,
 		C3.Plugins.Sprite.Exps.AnimationFrameCount,
 		C3.Behaviors.Physics.Acts.ApplyForceAtAngle,
+		C3.Plugins.Sprite.Cnds.OnCollision,
+		C3.Plugins.System.Acts.SetVar,
+		C3.Plugins.System.Exps.choose,
+		C3.Plugins.System.Cnds.CompareVar,
 		C3.Plugins.System.Acts.ToggleBoolVar,
 		C3.Plugins.System.Acts.SetObjectTimescale,
 		C3.Behaviors.DragnDrop.Cnds.IsDragging,
-		C3.Plugins.System.Acts.SetVar,
 		C3.Plugins.Audio.Acts.SetVolume,
 		C3.Plugins.Audio.Acts.StopAll,
 		C3.Plugins.System.Acts.GoToLayout,
@@ -4603,6 +4606,7 @@ self.C3_JsPropNameTable = [
 	{Variable1: 0},
 	{Staped: 0},
 	{Variable2: 0},
+	{sdad: 0},
 	{sOUND: 0},
 	{mUSIC: 0}
 ];
@@ -4705,6 +4709,7 @@ function or(l, r)
 }
 
 self.C3_ExpressionFuncs = [
+		() => 12,
 		p => {
 			const n0 = p._GetNode(0);
 			return () => n0.ExpObject();
@@ -4862,6 +4867,15 @@ self.C3_ExpressionFuncs = [
 		p => {
 			const f0 = p._GetNode(0).GetBoundMethod();
 			return () => f0(60, 120);
+		},
+		() => 20,
+		p => {
+			const f0 = p._GetNode(0).GetBoundMethod();
+			return () => f0(1, 2, 3, 4);
+		},
+		p => {
+			const v0 = p._GetNode(0).GetVar();
+			return () => (0 + v0.GetValue());
 		},
 		() => "UI",
 		() => "black",
