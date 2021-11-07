@@ -4466,6 +4466,7 @@ self.C3_GetObjectRefTable = function () {
 		C3.Behaviors.Tween.Acts.TweenTwoProperties,
 		C3.Plugins.Sprite.Acts.Spawn,
 		C3.Plugins.Particles.Acts.SetAngle,
+		C3.Plugins.Audio.Acts.StopAll,
 		C3.Plugins.System.Cnds.Else,
 		C3.Plugins.Spritefont2.Acts.SetVisible,
 		C3.Plugins.Spritefont2.Acts.SetX,
@@ -4497,6 +4498,8 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.System.Exps.int,
 		C3.Plugins.Sprite.Exps.AnimationFrameCount,
 		C3.Behaviors.Physics.Acts.ApplyForceAtAngle,
+		C3.Plugins.Sprite.Acts.SetBoolInstanceVar,
+		C3.Plugins.Sprite.Cnds.IsBoolInstanceVarSet,
 		C3.Plugins.Sprite.Cnds.OnCollision,
 		C3.Plugins.System.Acts.SetVar,
 		C3.Plugins.System.Exps.choose,
@@ -4505,7 +4508,6 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.System.Acts.SetObjectTimescale,
 		C3.Behaviors.DragnDrop.Cnds.IsDragging,
 		C3.Plugins.Audio.Acts.SetVolume,
-		C3.Plugins.Audio.Acts.StopAll,
 		C3.Plugins.System.Acts.GoToLayout,
 		C3.Plugins.System.Cnds.LayerVisible,
 		C3.Plugins.Mouse.Cnds.IsOverObject,
@@ -4605,7 +4607,7 @@ self.C3_JsPropNameTable = [
 	{Oblaka: 0},
 	{Variable1: 0},
 	{Staped: 0},
-	{Variable2: 0},
+	{trig: 0},
 	{sdad: 0},
 	{sOUND: 0},
 	{mUSIC: 0}
@@ -4730,7 +4732,7 @@ self.C3_ExpressionFuncs = [
 			const v0 = p._GetNode(0).GetVar();
 			return () => ((-20) + v0.GetValue());
 		},
-		() => "nusic",
+		() => "m1",
 		() => "All",
 		() => "Slide",
 		p => {
@@ -4793,6 +4795,11 @@ self.C3_ExpressionFuncs = [
 			return () => (n0.ExpObject() - 900);
 		},
 		() => 5,
+		p => {
+			const v0 = p._GetNode(0).GetVar();
+			return () => ((-10) + v0.GetValue());
+		},
+		() => "m13",
 		p => {
 			const n0 = p._GetNode(0);
 			const n1 = p._GetNode(1);
@@ -4868,14 +4875,11 @@ self.C3_ExpressionFuncs = [
 			const f0 = p._GetNode(0).GetBoundMethod();
 			return () => f0(60, 120);
 		},
+		() => 0.1,
 		() => 20,
 		p => {
 			const f0 = p._GetNode(0).GetBoundMethod();
 			return () => f0(1, 2, 3, 4);
-		},
-		p => {
-			const v0 = p._GetNode(0).GetVar();
-			return () => (0 + v0.GetValue());
 		},
 		() => "UI",
 		() => "black",
@@ -4898,12 +4902,8 @@ self.C3_ExpressionFuncs = [
 			const n1 = p._GetNode(1);
 			return () => ((n0.ExpObject() - n1.ExpInstVar()) / 2);
 		},
-		p => {
-			const v0 = p._GetNode(0).GetVar();
-			return () => ((-10) + v0.GetValue());
-		},
+		() => "m",
 		() => 0.86,
-		() => 0.1,
 		() => 0.2,
 		() => 640,
 		() => 380,
