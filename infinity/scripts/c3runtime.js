@@ -4076,6 +4076,57 @@ value:this._isDragging},{name:prefix+".properties.enabled.name",value:this._isEn
 }
 
 {
+'use strict';const C3=self.C3;C3.Behaviors.LOS=class LOSBehavior extends C3.SDKBehaviorBase{constructor(opts){super(opts)}Release(){super.Release()}};
+
+}
+
+{
+'use strict';const C3=self.C3;C3.Behaviors.LOS.Type=class LOSType extends C3.SDKBehaviorTypeBase{constructor(behaviorType){super(behaviorType);this._obstacleTypes=[]}Release(){C3.clearArray(this._obstacleTypes);super.Release()}OnCreate(){}GetObstacleTypes(){return this._obstacleTypes}FindLOSBehavior(inst){const myType=this.GetBehaviorType();for(const behInst of inst.GetBehaviorInstances())if(behInst.GetBehaviorType()===myType)return behInst.GetSdkInstance();return null}};
+
+}
+
+{
+'use strict';const C3=self.C3;const C3X=self.C3X;const IBehaviorInstance=self.IBehaviorInstance;const OBSTACLE_MODE=0;const RANGE=1;const CONE=2;const USE_COLLISION_CELLS=3;const MODE_SOLID=0;const collisionCandidates=[];
+C3.Behaviors.LOS.Instance=class LOSInstance extends C3.SDKBehaviorInstanceBase{constructor(behInst,properties){super(behInst);this._obstacleMode=0;this._range=1E4;this._cone=C3.toRadians(360);this._useCollisionCells=true;this._ray=new C3.Ray;if(properties){this._obstacleMode=properties[OBSTACLE_MODE];this._range=properties[RANGE];this._cone=C3.toRadians(properties[CONE]);this._useCollisionCells=properties[USE_COLLISION_CELLS]}}Release(){super.Release()}SaveToJson(){return{"r":this._range,"c":this._cone,
+"om":this._obstacleMode,"ucc":this._useCollisionCells,"t":this.GetSdkType().GetObstacleTypes().map(t=>t.GetSID())}}LoadFromJson(o){this._range=o["r"];this._cone=o["c"];this._obstacleMode=o["om"]||0;this._useCollisionCells=!!o["ucc"];const obstacleTypes=this.GetSdkType().GetObstacleTypes();C3.clearArray(obstacleTypes);for(const sid of o["t"]){const objectClass=this._runtime.GetObjectClassBySID(sid);if(objectClass)obstacleTypes.push(objectClass)}}HasLOSToInstance(inst,imgPt){const uid=inst.GetUID();
+const [x,y]=inst.GetImagePoint(imgPt);const hasLOS=this.HasLOSTo(x,y);return hasLOS||this._ray.hitUid===uid}HasLOSTo(x,y){const wi=this.GetWorldInfo();let angle=wi.GetAngle();if(wi.GetWidth()<0)angle+=Math.PI;return this.HasLOSBetweenPositions(wi.GetX(),wi.GetY(),angle,x,y)}HasLOSBetweenPositions(fromX,fromY,angle,toX,toY){const range=this._range;if(C3.distanceSquared(fromX,fromY,toX,toY)>range*range)return false;const a=C3.angleTo(fromX,fromY,toX,toY);if(C3.angleDiff(angle,a)>this._cone/2)return false;
+const ray=this.CastRay(fromX,fromY,toX,toY,this._useCollisionCells);return!ray.DidCollide()}_GetCollisionCandidates(ray,useCollisionCells){if(useCollisionCells){const layer=this.GetWorldInfo().GetLayer();const collisionEngine=this._runtime.GetCollisionEngine();if(this._obstacleMode===MODE_SOLID)collisionEngine.GetSolidCollisionCandidates(layer,ray.rect,collisionCandidates);else collisionEngine.GetObjectClassesCollisionCandidates(layer,this._GetObstacleTypes(),ray.rect,collisionCandidates);return collisionCandidates}else if(this._obstacleMode===
+MODE_SOLID){const solidBehavior=this._runtime.GetSolidBehavior();if(solidBehavior)return solidBehavior.GetInstances();else return collisionCandidates}else{for(const objectClass of this._GetObstacleTypes())C3.appendArray(collisionCandidates,objectClass.GetInstances());return collisionCandidates}}_GetObstacleTypes(){return this.GetSdkType().GetObstacleTypes()}CastRay(fromX,fromY,toX,toY,useCollisionCells){const ray=this._ray.Set(fromX,fromY,toX,toY);const candidates=this._GetCollisionCandidates(ray,
+useCollisionCells);const collisionEngine=this._runtime.GetCollisionEngine();const isSolidMode=this._obstacleMode===MODE_SOLID;const selfInstance=this._inst;for(let i=0,len=candidates.length;i<len;++i){const rinst=candidates[i];if(rinst===selfInstance)continue;if(!isSolidMode||collisionEngine.IsSolidCollisionAllowed(rinst,selfInstance))collisionEngine.TestRayIntersectsInstance(rinst,ray)}ray.Complete();C3.clearArray(collisionCandidates);return ray}_GetRay(){return this._ray}_GetRayHitX(){const ray=
+this._ray;return ray.DidCollide()?ray.hitX:0}_GetRayHitY(){const ray=this._ray;return ray.DidCollide()?ray.hitY:0}_GetRayHitDistance(){const ray=this._ray;return ray.DidCollide()?ray.distance:0}_GetRayHitUID(){const ray=this._ray;return ray.DidCollide()?ray.hitUid:-1}_GetRayNormalX(length){const ray=this._ray;return ray.DidCollide()?ray.hitX+length*ray.normalX:0}_GetRayNormalY(length){const ray=this._ray;return ray.DidCollide()?ray.hitY+length*ray.normalY:0}_GetRayNormalAngle(){const ray=this._ray;
+return ray.DidCollide()?ray.hitNormal:0}_GetRayReflectionX(length){const ray=this._ray;return ray.DidCollide()?ray.hitX+length*ray.reflectionX:0}_GetRayReflectionY(length){const ray=this._ray;return ray.DidCollide()?ray.hitY+length*ray.reflectionY:0}_GetRayReflectionAngle(){const ray=this._ray;return ray.DidCollide()?Math.atan2(ray.reflectionY,ray.reflectionX):0}_SetRange(r){this._range=r}_GetRange(){return this._range}_SetConeOfView(c){this._cone=c}_GetConeOfView(){return this._cone}GetPropertyValueByIndex(index){switch(index){case OBSTACLE_MODE:return this._obstacleMode;
+case RANGE:return this._range;case CONE:return C3.toDegrees(this._cone);case USE_COLLISION_CELLS:return this._useCollisionCells}}SetPropertyValueByIndex(index,value){switch(index){case OBSTACLE_MODE:this._obstacleMode=value;break;case RANGE:this._range=value;break;case CONE:this._cone=C3.toRadians(value);break;case USE_COLLISION_CELLS:this._useCollisionCells=!!value;break}}GetDebuggerProperties(){const prefix="behaviors.los.properties";return[{title:"$"+this.GetBehaviorType().GetName(),properties:[{name:prefix+
+".range.name",value:this._GetRange(),onedit:v=>this._SetRange(v)},{name:prefix+".cone-of-view.name",value:C3.toDegrees(this._GetConeOfView()),onedit:v=>this._SetConeOfView(C3.toRadians(v))}]}]}GetScriptInterfaceClass(){return self.ILOSBehaviorInstance}};const map=new WeakMap;
+self.ILOSBehaviorInstance=class ILOSBehaviorInstance extends IBehaviorInstance{constructor(){super();const sdkInst=IBehaviorInstance._GetInitInst().GetSdkInstance();map.set(this,sdkInst);this.ray=new self.ILOSBehaviorRay(sdkInst)}set range(r){C3X.RequireFiniteNumber(r);map.get(this)._SetRange(r)}get range(){return map.get(this)._GetRange()}set coneOfView(c){C3X.RequireFiniteNumber(c);map.get(this)._SetConeOfView(c)}get coneOfView(){return map.get(this)._GetConeOfView()}hasLOStoPosition(x,y){C3X.RequireNumber(x);
+C3X.RequireNumber(y);return map.get(this).HasLOSTo(x,y)}hasLOSBetweenPositions(fromX,fromY,fromAngle,toX,toY){C3X.RequireNumber(fromX);C3X.RequireNumber(fromY);C3X.RequireNumber(fromAngle);C3X.RequireNumber(toX);C3X.RequireNumber(toY);return map.get(this).HasLOSBetweenPositions(fromX,fromY,fromAngle,toX,toY)}castRay(fromX,fromY,toX,toY,useCollisionCells=true){C3X.RequireNumber(fromX);C3X.RequireNumber(fromY);C3X.RequireNumber(toX);C3X.RequireNumber(toY);map.get(this).CastRay(fromX,fromY,toX,toY,useCollisionCells);
+return this.ray}};
+self.ILOSBehaviorRay=class ILOSBehaviorRay{constructor(sdkInst){map.set(this,sdkInst)}get didCollide(){return map.get(this)._GetRay().DidCollide()}get hitX(){return map.get(this)._GetRayHitX()}get hitY(){return map.get(this)._GetRayHitY()}get hitDistance(){return map.get(this)._GetRayHitDistance()}get hitUid(){return map.get(this)._GetRayHitUID()}getNormalX(length){C3X.RequireFiniteNumber(length);return map.get(this)._GetRayNormalX(length)}getNormalY(length){C3X.RequireFiniteNumber(length);return map.get(this)._GetRayNormalY(length)}get normalAngle(){return map.get(this)._GetRayNormalAngle()}getReflectionX(length){C3X.RequireFiniteNumber(length);
+return map.get(this)._GetRayReflectionX(length)}getReflectionY(length){C3X.RequireFiniteNumber(length);return map.get(this)._GetRayReflectionY(length)}get reflectionAngle(){return map.get(this)._GetRayReflectionAngle()}};
+
+}
+
+{
+'use strict';const C3=self.C3;const lToPick=new Set;const rToPick=new Set;
+C3.Behaviors.LOS.Cnds={HasLOSToPosition(x,y){return this.HasLOSTo(x,y)},RayIntersected(){return this._ray.DidCollide()},HasLOSBetweenPositions(fromX,fromY,fromAngle,toX,toY){return this.HasLOSBetweenPositions(fromX,fromY,C3.toRadians(fromAngle),toX,toY)},HasLOSToObject(objectClass,imgPt){if(!objectClass)return false;const currentCondition=this._runtime.GetCurrentCondition();const isOrBlock=currentCondition.GetEventBlock().IsOrBlock();const runtime=currentCondition.GetRuntime();const lsol=currentCondition.GetObjectClass().GetCurrentSol();
+const rsol=objectClass.GetCurrentSol();let linstances=lsol.GetInstances();let rinstances=rsol.GetInstances();if(lsol.IsSelectAll())C3.clearArray(lsol._GetOwnElseInstances());else if(isOrBlock)if(runtime.IsCurrentConditionFirst()&&!lsol._GetOwnElseInstances().length&&lsol._GetOwnInstances().length)linstances=lsol._GetOwnInstances();else linstances=lsol._GetOwnElseInstances();if(rsol.IsSelectAll())C3.clearArray(rsol._GetOwnElseInstances());else if(isOrBlock)if(runtime.IsCurrentConditionFirst()&&!rsol._GetOwnElseInstances().length&&
+rsol._GetOwnInstances().length)rinstances=rsol._GetOwnInstances();else rinstances=rsol._GetOwnElseInstances();const isInverted=currentCondition.IsInverted();const sdkType=this.GetSdkType();for(const linst of linstances){let pick=false;const losBeh=sdkType.FindLOSBehavior(linst);if(rinstances.length===0){if(isInverted)pick=true}else for(const rinst of rinstances)if(linst!==rinst&&C3.xor(losBeh.HasLOSToInstance(rinst,imgPt),isInverted)){pick=true;rToPick.add(rinst)}if(pick)lToPick.add(linst)}if(isOrBlock){if(linstances===
+lsol._GetOwnElseInstances())lsol.TransferElseInstancesToOwn(lToPick);else{lsol.AddElseInstances(lToPick,linstances);lsol.SetSetPicked(lToPick)}if(rinstances===rsol._GetOwnElseInstances())rsol.TransferElseInstancesToOwn(rToPick);else{rsol.AddElseInstances(rToPick,rinstances);rsol.SetSetPicked(rToPick)}}else{lsol.SetSetPicked(lToPick);rsol.SetSetPicked(rToPick)}lToPick.clear();rToPick.clear();return lsol.HasAnyInstances()}};
+
+}
+
+{
+'use strict';const C3=self.C3;C3.Behaviors.LOS.Acts={SetRange(r){this._SetRange(r)},SetCone(c){this._SetConeOfView(C3.toRadians(c))},CastRay(fromX,fromY,toX,toY,useCollisionCells){this.CastRay(fromX,fromY,toX,toY,useCollisionCells)},AddObstacle(objectClass){const obstacleTypes=this.GetSdkType().GetObstacleTypes();if(obstacleTypes.includes(objectClass))return;for(const t of obstacleTypes)if(t.IsFamily()&&t.FamilyHasMember(objectClass))return;obstacleTypes.push(objectClass)},ClearObstacles(){C3.clearArray(this.GetSdkType().GetObstacleTypes())}};
+
+}
+
+{
+'use strict';const C3=self.C3;
+C3.Behaviors.LOS.Exps={Range(){return this._GetRange()},ConeOfView(){return C3.toDegrees(this._GetConeOfView())},HitX(){return this._GetRayHitX()},HitY(){return this._GetRayHitY()},HitDistance(){return this._GetRayHitDistance()},HitUID(){return this._GetRayHitUID()},NormalX(length){return this._GetRayNormalX(length)},NormalY(length){return this._GetRayNormalY(length)},NormalAngle(){return C3.toDegrees(this._GetRayNormalAngle())},ReflectionX(length){return this._GetRayReflectionX(length)},ReflectionY(length){return this._GetRayReflectionY(length)},
+ReflectionAngle(){return C3.toDegrees(this._GetRayReflectionAngle())}};
+
+}
+
+{
 const C3 = self.C3;
 self.C3_GetObjectRefTable = function () {
 	return [
@@ -4093,6 +4144,7 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.LocalStorage,
 		C3.Plugins.Particles,
 		C3.Behaviors.DragnDrop,
+		C3.Behaviors.LOS,
 		C3.Plugins.System.Cnds.OnLayoutStart,
 		C3.Plugins.Sprite.Acts.Destroy,
 		C3.Plugins.Sprite.Acts.StopAnim,
@@ -4120,6 +4172,7 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.System.Exps.choose,
 		C3.Plugins.Tilemap.Acts.SetTile,
 		C3.Plugins.Sprite.Acts.Spawn,
+		C3.Plugins.Sprite.Acts.SetInstanceVar,
 		C3.Plugins.System.Acts.SetCanvasSize,
 		C3.Plugins.System.Acts.SetLayoutScale,
 		C3.Plugins.System.Cnds.ForEach,
@@ -4162,14 +4215,25 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.Sprite.Acts.MoveToBottom,
 		C3.Behaviors.Tween.Cnds.OnAnyTweensFinished,
 		C3.Plugins.Sprite.Cnds.AngleWithin,
+		C3.Behaviors.Tween.Cnds.IsAnyPlaying,
 		C3.Plugins.Particles.Acts.SetAngle,
 		C3.Behaviors.Sin.Exps.Period,
 		C3.Behaviors.Sin.Acts.UpdateInitialState,
 		C3.Plugins.Sprite.Acts.SubInstanceVar,
+		C3.Plugins.Particles.Acts.SetXRandomiser,
+		C3.Plugins.Particles.Acts.SetRate,
+		C3.Plugins.Sprite.Acts.SetX,
+		C3.Plugins.Sprite.Acts.SetY,
 		C3.Plugins.Tilemap.Acts.EraseTile,
 		C3.Behaviors.Sin.Acts.SetPeriod,
 		C3.Behaviors.Sin.Acts.SetMagnitude,
 		C3.Behaviors.Tween.Cnds.OnTweensFinished,
+		C3.Plugins.System.Cnds.Every,
+		C3.Plugins.Sprite.Cnds.IsOnLayer,
+		C3.Behaviors.LOS.Cnds.HasLOSToObject,
+		C3.Plugins.Sprite.Acts.MoveToLayer,
+		C3.Plugins.Sprite.Acts.SetPos,
+		C3.Plugins.Sprite.Cnds.PickDistance,
 		C3.Plugins.Sprite.Acts.SetOpacity,
 		C3.Plugins.Sprite.Exps.Opacity,
 		C3.Plugins.Sprite.Cnds.CompareY,
@@ -4179,7 +4243,7 @@ self.C3_GetObjectRefTable = function () {
 		C3.Behaviors.DragnDrop.Acts.SetEnabled,
 		C3.Behaviors.DragnDrop.Cnds.OnDragStart,
 		C3.Behaviors.DragnDrop.Cnds.OnDrop,
-		C3.Plugins.Sprite.Cnds.PickDistance
+		C3.Plugins.Sprite.Exps.LayerNumber
 	];
 };
 self.C3_JsPropNameTable = [
@@ -4257,11 +4321,16 @@ self.C3_JsPropNameTable = [
 	{NadpicSunkuk2: 0},
 	{NadpicSunkuk: 0},
 	{"3emla": 0},
+	{item: 0},
+	{item2: 0},
+	{item3: 0},
 	{Family1: 0},
 	{invBarr: 0},
 	{DragDrop: 0},
 	{tool: 0},
 	{Main: 0},
+	{LineOfSight: 0},
+	{items: 0},
 	{debug: 0},
 	{CanvasWidth: 0},
 	{CanvasHeight: 0},
@@ -4432,6 +4501,11 @@ self.C3_ExpressionFuncs = [
 		},
 		() => 78,
 		() => 100,
+		p => {
+			const f0 = p._GetNode(0).GetBoundMethod();
+			const f1 = p._GetNode(1).GetBoundMethod();
+			return () => f0(f1(3, 5));
+		},
 		() => 1920,
 		() => 1080,
 		p => {
@@ -4531,11 +4605,11 @@ self.C3_ExpressionFuncs = [
 		() => "runBack",
 		() => "mine",
 		() => "vpah",
+		() => 20,
 		() => "Foll",
 		p => {
-			const n0 = p._GetNode(0);
-			const f1 = p._GetNode(1).GetBoundMethod();
-			return () => add(n0.ExpObject(), f1((-90), 90));
+			const f0 = p._GetNode(0).GetBoundMethod();
+			return () => f0((-90), 90);
 		},
 		() => "Derevia",
 		() => -90,
@@ -4547,12 +4621,60 @@ self.C3_ExpressionFuncs = [
 			const n0 = p._GetNode(0);
 			return () => n0.ExpBehavior();
 		},
+		() => 90,
+		() => 51,
+		p => {
+			const f0 = p._GetNode(0).GetBoundMethod();
+			const f1 = p._GetNode(1).GetBoundMethod();
+			return () => f0(f1(5, 13));
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			const f1 = p._GetNode(1).GetBoundMethod();
+			const n2 = p._GetNode(2);
+			const n3 = p._GetNode(3);
+			return () => (n0.ExpObject() + f1((-(n2.ExpObject() / 3)), (n3.ExpObject() / 3)));
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			const f1 = p._GetNode(1).GetBoundMethod();
+			return () => (n0.ExpObject() + f1((-5), 5));
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			const f1 = p._GetNode(1).GetBoundMethod();
+			return () => (n0.ExpObject() + f1((-10), 10));
+		},
+		p => {
+			const f0 = p._GetNode(0).GetBoundMethod();
+			return () => f0(0.8, 1);
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			const f1 = p._GetNode(1).GetBoundMethod();
+			return () => (n0.ExpObject() + f1((-15), (-25)));
+		},
+		p => {
+			const f0 = p._GetNode(0).GetBoundMethod();
+			return () => f0(0.4, 0.6);
+		},
 		p => {
 			const f0 = p._GetNode(0).GetBoundMethod();
 			const n1 = p._GetNode(1);
 			return () => f0((n1.ExpObject() / 16));
 		},
+		p => {
+			const f0 = p._GetNode(0).GetBoundMethod();
+			const f1 = p._GetNode(1).GetBoundMethod();
+			return () => f0(f1(1, 2));
+		},
 		() => 0.13,
+		() => 12,
+		p => {
+			const f0 = p._GetNode(0).GetBoundMethod();
+			const f1 = p._GetNode(1).GetBoundMethod();
+			return () => f0(f1(3, 9));
+		},
 		p => {
 			const f0 = p._GetNode(0).GetBoundMethod();
 			const n1 = p._GetNode(1);
@@ -4560,6 +4682,13 @@ self.C3_ExpressionFuncs = [
 		},
 		() => 226,
 		() => 680,
+		() => 0.4,
+		() => "have",
+		p => {
+			const n0 = p._GetNode(0);
+			const n1 = p._GetNode(1);
+			return () => (n0.ExpObject() - (n1.ExpObject() / 2));
+		},
 		() => "Layer",
 		p => {
 			const n0 = p._GetNode(0);
@@ -4574,7 +4703,8 @@ self.C3_ExpressionFuncs = [
 			const v0 = p._GetNode(0).GetVar();
 			return () => (v0.GetValue() * (-1));
 		},
-		() => -1
+		() => -1,
+		() => "UI"
 ];
 
 
