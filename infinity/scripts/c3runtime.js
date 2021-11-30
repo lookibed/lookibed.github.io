@@ -4148,6 +4148,7 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.System.Cnds.OnLayoutStart,
 		C3.Plugins.Sprite.Acts.Destroy,
 		C3.Plugins.Sprite.Acts.StopAnim,
+		C3.Plugins.System.Acts.LoadState,
 		C3.Plugins.System.Cnds.Repeat,
 		C3.Plugins.System.Acts.SetVar,
 		C3.Plugins.System.Exps.loopindex,
@@ -4181,6 +4182,8 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.System.Cnds.For,
 		C3.Plugins.System.Acts.SetLayerScale,
 		C3.Plugins.System.Exps.layoutscale,
+		C3.Plugins.System.Cnds.OnLoadComplete,
+		C3.Plugins.Spritefont2.Acts.SetVisible,
 		C3.Plugins.System.Cnds.IsGroupActive,
 		C3.Plugins.Keyboard.Cnds.IsKeyDown,
 		C3.Behaviors.EightDir.Acts.SimulateControl,
@@ -4195,9 +4198,10 @@ self.C3_GetObjectRefTable = function () {
 		C3.Behaviors.Tween.Acts.TweenTwoProperties,
 		C3.Plugins.Sprite.Acts.SetBoolInstanceVar,
 		C3.Plugins.System.Cnds.PickNth,
-		C3.Plugins.Touch.Cnds.OnTapGesture,
+		C3.Plugins.Touch.Cnds.IsInTouch,
 		C3.Plugins.System.Cnds.CompareBoolVar,
 		C3.Plugins.Sprite.Cnds.IsBoolInstanceVarSet,
+		C3.Plugins.Sprite.Cnds.CompareInstanceVar,
 		C3.Plugins.Sprite.Exps.X,
 		C3.Plugins.Sprite.Exps.Y,
 		C3.Plugins.Touch.Exps.X,
@@ -4205,7 +4209,6 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.System.Acts.SetBoolVar,
 		C3.Behaviors.EightDir.Acts.Stop,
 		C3.Plugins.System.Acts.SetGroupActive,
-		C3.Plugins.Sprite.Cnds.CompareInstanceVar,
 		C3.Plugins.Sprite.Acts.SetAngle,
 		C3.Plugins.System.Acts.Wait,
 		C3.Behaviors.Tween.Acts.TweenOneProperty,
@@ -4231,6 +4234,9 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.System.Cnds.Every,
 		C3.Plugins.Sprite.Cnds.IsOnLayer,
 		C3.Behaviors.LOS.Cnds.HasLOSToObject,
+		C3.Plugins.System.Cnds.PickByComparison,
+		C3.Plugins.Sprite.Exps.PickedCount,
+		C3.Plugins.Sprite.Exps.Count,
 		C3.Plugins.Sprite.Acts.MoveToLayer,
 		C3.Plugins.Sprite.Acts.SetPos,
 		C3.Plugins.Sprite.Cnds.PickDistance,
@@ -4243,7 +4249,9 @@ self.C3_GetObjectRefTable = function () {
 		C3.Behaviors.DragnDrop.Acts.SetEnabled,
 		C3.Behaviors.DragnDrop.Cnds.OnDragStart,
 		C3.Behaviors.DragnDrop.Cnds.OnDrop,
-		C3.Plugins.Sprite.Exps.LayerNumber
+		C3.Plugins.Sprite.Exps.LayerNumber,
+		C3.Plugins.System.Acts.SaveState,
+		C3.Plugins.System.Cnds.OnSaveComplete
 	];
 };
 self.C3_JsPropNameTable = [
@@ -4273,7 +4281,7 @@ self.C3_JsPropNameTable = [
 	{InvenBarBack2: 0},
 	{Nadpic_back3: 0},
 	{Nadpic_back4: 0},
-	{NadpicSunkuk3: 0},
+	{TextSave: 0},
 	{NadpicSunkuk4: 0},
 	{Anchor: 0},
 	{Sprite6: 0},
@@ -4321,6 +4329,7 @@ self.C3_JsPropNameTable = [
 	{NadpicSunkuk2: 0},
 	{NadpicSunkuk: 0},
 	{"3emla": 0},
+	{inInvent: 0},
 	{item: 0},
 	{item2: 0},
 	{item3: 0},
@@ -4442,6 +4451,7 @@ function or(l, r)
 }
 
 self.C3_ExpressionFuncs = [
+		() => "mysave",
 		() => 3,
 		p => {
 			const f0 = p._GetNode(0).GetBoundMethod();
@@ -4533,6 +4543,7 @@ self.C3_ExpressionFuncs = [
 			return () => (f0() - 49);
 		},
 		() => 1.3,
+		() => "Weapon",
 		p => {
 			const n0 = p._GetNode(0);
 			const n1 = p._GetNode(1);
@@ -4540,7 +4551,6 @@ self.C3_ExpressionFuncs = [
 			const f3 = p._GetNode(3).GetBoundMethod();
 			return () => C3.toDegrees(C3.angleTo(n0.ExpObject(), n1.ExpObject(), f2(), f3()));
 		},
-		() => "Weapon",
 		p => {
 			const v0 = p._GetNode(0).GetVar();
 			return () => (180 - v0.GetValue());
@@ -4682,6 +4692,7 @@ self.C3_ExpressionFuncs = [
 		},
 		() => 226,
 		() => 680,
+		() => 0.12,
 		() => 0.4,
 		() => "have",
 		p => {
