@@ -4148,7 +4148,6 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.System.Cnds.OnLayoutStart,
 		C3.Plugins.Sprite.Acts.Destroy,
 		C3.Plugins.Sprite.Acts.StopAnim,
-		C3.Plugins.System.Acts.LoadState,
 		C3.Plugins.System.Cnds.Repeat,
 		C3.Plugins.System.Acts.SetVar,
 		C3.Plugins.System.Exps.loopindex,
@@ -4251,7 +4250,10 @@ self.C3_GetObjectRefTable = function () {
 		C3.Behaviors.DragnDrop.Cnds.OnDrop,
 		C3.Plugins.Sprite.Exps.LayerNumber,
 		C3.Plugins.System.Acts.SaveState,
-		C3.Plugins.System.Cnds.OnSaveComplete
+		C3.Plugins.System.Cnds.OnSaveComplete,
+		C3.Plugins.Touch.Cnds.OnTouchObject,
+		C3.Plugins.System.Acts.LoadState,
+		C3.Plugins.System.Acts.GoToLayout
 	];
 };
 self.C3_JsPropNameTable = [
@@ -4333,6 +4335,11 @@ self.C3_JsPropNameTable = [
 	{item: 0},
 	{item2: 0},
 	{item3: 0},
+	{sdas2: 0},
+	{image_20211121_: 0},
+	{Sprite7: 0},
+	{sdas3: 0},
+	{sdas4: 0},
 	{Family1: 0},
 	{invBarr: 0},
 	{DragDrop: 0},
@@ -4340,6 +4347,7 @@ self.C3_JsPropNameTable = [
 	{Main: 0},
 	{LineOfSight: 0},
 	{items: 0},
+	{Button: 0},
 	{debug: 0},
 	{CanvasWidth: 0},
 	{CanvasHeight: 0},
@@ -4451,7 +4459,6 @@ function or(l, r)
 }
 
 self.C3_ExpressionFuncs = [
-		() => "mysave",
 		() => 3,
 		p => {
 			const f0 = p._GetNode(0).GetBoundMethod();
@@ -4715,7 +4722,15 @@ self.C3_ExpressionFuncs = [
 			return () => (v0.GetValue() * (-1));
 		},
 		() => -1,
-		() => "UI"
+		() => "UI",
+		() => "mysave",
+		p => {
+			const v0 = p._GetNode(0).GetVar();
+			return () => (v0.GetValue() / 720);
+		},
+		() => 0.98,
+		() => 720,
+		() => 400
 ];
 
 
