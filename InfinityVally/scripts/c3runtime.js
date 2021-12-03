@@ -4195,6 +4195,7 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.System.Cnds.OnLayoutStart,
 		C3.Plugins.Sprite.Acts.Destroy,
 		C3.Plugins.Sprite.Acts.StopAnim,
+		C3.Plugins.Sprite.Cnds.IsOnLayer,
 		C3.Plugins.System.Cnds.Repeat,
 		C3.Plugins.System.Acts.SetVar,
 		C3.Plugins.System.Exps.loopindex,
@@ -4204,6 +4205,7 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.Sprite.Exps.ImagePointY,
 		C3.Plugins.Sprite.Exps.Height,
 		C3.Plugins.Sprite.Acts.AddChild,
+		C3.Plugins.Sprite.Acts.SetBoolInstanceVar,
 		C3.Plugins.Tilemap.Exps.Height,
 		C3.Plugins.Tilemap.Exps.Width,
 		C3.Plugins.Tilemap.Cnds.CompareTileAt,
@@ -4235,6 +4237,7 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.System.Cnds.OnLoadComplete,
 		C3.Plugins.System.Cnds.OnSaveComplete,
 		C3.Plugins.System.Acts.Wait,
+		C3.Plugins.System.Cnds.CompareVar,
 		C3.Plugins.Keyboard.Cnds.IsKeyDown,
 		C3.Behaviors.EightDir.Acts.SimulateControl,
 		C3.Plugins.Sprite.Acts.SetAnim,
@@ -4242,31 +4245,30 @@ self.C3_GetObjectRefTable = function () {
 		C3.Behaviors.EightDir.Cnds.IsMoving,
 		C3.Plugins.System.Cnds.TriggerOnce,
 		C3.Plugins.Sprite.Acts.StartAnim,
-		C3.Plugins.Keyboard.Cnds.OnAnyKey,
-		C3.Plugins.Keyboard.Exps.LastKeyCode,
-		C3.Plugins.System.Cnds.PickAll,
-		C3.Behaviors.Tween.Acts.TweenTwoProperties,
-		C3.Plugins.Sprite.Acts.SetBoolInstanceVar,
-		C3.Plugins.System.Cnds.PickNth,
 		C3.Plugins.Touch.Cnds.IsInTouch,
 		C3.Plugins.System.Cnds.CompareBoolVar,
+		C3.Plugins.System.Acts.SetBoolVar,
 		C3.Plugins.Sprite.Cnds.IsBoolInstanceVarSet,
 		C3.Plugins.Sprite.Exps.X,
 		C3.Plugins.Sprite.Exps.Y,
 		C3.Plugins.Touch.Exps.X,
 		C3.Plugins.Touch.Exps.Y,
-		C3.Plugins.System.Acts.SetBoolVar,
 		C3.Behaviors.EightDir.Acts.Stop,
 		C3.Plugins.System.Acts.SetGroupActive,
 		C3.Plugins.Sprite.Cnds.CompareInstanceVar,
+		C3.Plugins.Sprite.Acts.RemoveFromParent,
+		C3.Plugins.Sprite.Acts.MoveToLayer,
+		C3.Plugins.Sprite.Acts.SetPos,
 		C3.Plugins.Sprite.Acts.SetAngle,
 		C3.Behaviors.Tween.Acts.TweenOneProperty,
 		C3.Plugins.Sprite.Exps.Angle,
 		C3.Plugins.Sprite.Acts.SetY,
 		C3.Plugins.Sprite.Acts.MoveToBottom,
 		C3.Plugins.Sprite.Acts.SetTowardPosition,
+		C3.Behaviors.Tween.Acts.TweenTwoProperties,
 		C3.Plugins.Sprite.Acts.ZMoveToObject,
 		C3.Behaviors.Tween.Cnds.OnAnyTweensFinished,
+		C3.Behaviors.Tween.Cnds.IsPlaying,
 		C3.Plugins.Sprite.Cnds.AngleWithin,
 		C3.Behaviors.Tween.Cnds.IsAnyPlaying,
 		C3.Plugins.Particles.Acts.SetAngle,
@@ -4281,19 +4283,17 @@ self.C3_GetObjectRefTable = function () {
 		C3.Behaviors.Sin.Acts.SetMagnitude,
 		C3.Plugins.Sprite.Cnds.IsAnimPlaying,
 		C3.Behaviors.Tween.Cnds.OnTweensFinished,
-		C3.Plugins.Sprite.Cnds.IsOnLayer,
 		C3.Behaviors.LOS.Cnds.HasLOSToObject,
-		C3.Plugins.System.Cnds.PickByComparison,
-		C3.Plugins.Sprite.Exps.PickedCount,
-		C3.Plugins.Sprite.Exps.Count,
-		C3.Plugins.Sprite.Acts.MoveToLayer,
-		C3.Plugins.Sprite.Acts.SetPos,
+		C3.Plugins.System.Cnds.PickAll,
 		C3.Plugins.Sprite.Cnds.PickDistance,
+		C3.Plugins.System.Acts.CreateObjectByName,
 		C3.Plugins.Sprite.Acts.SetOpacity,
 		C3.Plugins.Sprite.Exps.Opacity,
 		C3.Plugins.Sprite.Cnds.CompareY,
+		C3.Plugins.Keyboard.Cnds.OnAnyKey,
+		C3.Plugins.Keyboard.Exps.LastKeyCode,
+		C3.Plugins.System.Cnds.PickNth,
 		C3.Plugins.Keyboard.Cnds.OnKey,
-		C3.Plugins.System.Cnds.CompareVar,
 		C3.Plugins.System.Acts.SetLayerVisible,
 		C3.Behaviors.DragnDrop.Acts.SetEnabled,
 		C3.Behaviors.DragnDrop.Cnds.OnDragStart,
@@ -4305,8 +4305,6 @@ self.C3_GetObjectRefTable = function () {
 	];
 };
 self.C3_JsPropNameTable = [
-	{type: 0},
-	{tr: 0},
 	{axe2: 0},
 	{mine2: 0},
 	{vpah2: 0},
@@ -4372,6 +4370,8 @@ self.C3_JsPropNameTable = [
 	{Sprite2: 0},
 	{InvenBarBack: 0},
 	{InveBar: 0},
+	{type: 0},
+	{tr: 0},
 	{axe: 0},
 	{mine: 0},
 	{vpah: 0},
@@ -4379,7 +4379,6 @@ self.C3_JsPropNameTable = [
 	{NadpicSunkuk2: 0},
 	{NadpicSunkuk: 0},
 	{"3emla": 0},
-	{inInvent: 0},
 	{item: 0},
 	{item2: 0},
 	{item3: 0},
@@ -4392,13 +4391,17 @@ self.C3_JsPropNameTable = [
 	{item4: 0},
 	{Sprite8: 0},
 	{Mouse: 0},
+	{item5: 0},
+	{item6: 0},
+	{item7: 0},
+	{item8: 0},
+	{item9: 0},
 	{Family1: 0},
 	{invBarr: 0},
 	{DragDrop: 0},
-	{tool: 0},
-	{Main: 0},
 	{LineOfSight: 0},
 	{items: 0},
+	{Main: 0},
 	{Button: 0},
 	{debug: 0},
 	{CanvasWidth: 0},
@@ -4511,6 +4514,7 @@ function or(l, r)
 }
 
 self.C3_ExpressionFuncs = [
+		() => "toolMine",
 		() => 3,
 		p => {
 			const f0 = p._GetNode(0).GetBoundMethod();
@@ -4546,7 +4550,6 @@ self.C3_ExpressionFuncs = [
 		},
 		() => 6,
 		() => 15,
-		() => "toolMine",
 		p => {
 			const f0 = p._GetNode(0).GetBoundMethod();
 			return () => ((f0() * 16) + 8);
@@ -4598,20 +4601,24 @@ self.C3_ExpressionFuncs = [
 		() => "runFront",
 		() => "run",
 		() => "tool",
-		() => 49,
-		() => 57,
-		() => 0.3,
-		p => {
-			const f0 = p._GetNode(0).GetBoundMethod();
-			return () => (f0() - 49);
-		},
-		() => 1.3,
 		p => {
 			const n0 = p._GetNode(0);
 			const n1 = p._GetNode(1);
 			const f2 = p._GetNode(2).GetBoundMethod();
 			const f3 = p._GetNode(3).GetBoundMethod();
 			return () => C3.toDegrees(C3.angleTo(n0.ExpObject(), n1.ExpObject(), f2(), f3()));
+		},
+		() => "Semena",
+		p => {
+			const f0 = p._GetNode(0).GetBoundMethod();
+			const n1 = p._GetNode(1);
+			return () => f0((n1.ExpObject(1) / 16));
+		},
+		() => 680,
+		p => {
+			const f0 = p._GetNode(0).GetBoundMethod();
+			const f1 = p._GetNode(1).GetBoundMethod();
+			return () => f0((f1() / 16));
 		},
 		() => "Weapon",
 		p => {
@@ -4692,8 +4699,10 @@ self.C3_ExpressionFuncs = [
 		},
 		() => 0.39,
 		() => "up",
+		() => 0.3,
 		() => "mine",
 		() => "vpah",
+		() => "have",
 		() => "Foll",
 		p => {
 			const f0 = p._GetNode(0).GetBoundMethod();
@@ -4729,24 +4738,6 @@ self.C3_ExpressionFuncs = [
 			return () => (n0.ExpObject() + f1((-5), 5));
 		},
 		p => {
-			const n0 = p._GetNode(0);
-			const f1 = p._GetNode(1).GetBoundMethod();
-			return () => (n0.ExpObject() + f1((-10), 10));
-		},
-		p => {
-			const f0 = p._GetNode(0).GetBoundMethod();
-			return () => f0(0.8, 1);
-		},
-		p => {
-			const n0 = p._GetNode(0);
-			const f1 = p._GetNode(1).GetBoundMethod();
-			return () => (n0.ExpObject() + f1((-15), (-25)));
-		},
-		p => {
-			const f0 = p._GetNode(0).GetBoundMethod();
-			return () => f0(0.4, 0.6);
-		},
-		p => {
 			const f0 = p._GetNode(0).GetBoundMethod();
 			const n1 = p._GetNode(1);
 			return () => f0((n1.ExpObject() / 16));
@@ -4763,23 +4754,22 @@ self.C3_ExpressionFuncs = [
 			const f1 = p._GetNode(1).GetBoundMethod();
 			return () => f0(f1(3, 9));
 		},
-		p => {
-			const f0 = p._GetNode(0).GetBoundMethod();
-			const n1 = p._GetNode(1);
-			return () => f0((n1.ExpObject(1) / 16));
-		},
 		() => 226,
-		() => 680,
 		() => 0.12,
 		() => "runBack",
 		() => 0.4,
-		() => "have",
 		p => {
 			const n0 = p._GetNode(0);
 			const n1 = p._GetNode(1);
 			return () => (n0.ExpObject() - (n1.ExpObject() / 2));
 		},
 		() => "weapon",
+		() => "UI",
+		p => {
+			const f0 = p._GetNode(0).GetBoundMethod();
+			const f1 = p._GetNode(1).GetBoundMethod();
+			return () => and("item", f0(f1(5, 8)));
+		},
 		() => "Layer",
 		p => {
 			const n0 = p._GetNode(0);
@@ -4790,12 +4780,18 @@ self.C3_ExpressionFuncs = [
 			return () => C3.lerp(n0.ExpObject(), 20, 0.1);
 		},
 		() => "inentar",
+		() => 49,
+		() => 57,
+		p => {
+			const f0 = p._GetNode(0).GetBoundMethod();
+			return () => (f0() - 49);
+		},
+		() => 1.3,
 		p => {
 			const v0 = p._GetNode(0).GetVar();
 			return () => (v0.GetValue() * (-1));
 		},
 		() => -1,
-		() => "UI",
 		p => {
 			const v0 = p._GetNode(0).GetVar();
 			return () => (v0.GetValue() / 720);
