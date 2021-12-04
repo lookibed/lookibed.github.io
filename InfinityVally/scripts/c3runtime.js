@@ -4247,8 +4247,8 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.Sprite.Acts.StartAnim,
 		C3.Plugins.Touch.Cnds.IsInTouch,
 		C3.Plugins.System.Cnds.CompareBoolVar,
-		C3.Plugins.System.Acts.SetBoolVar,
 		C3.Plugins.Sprite.Cnds.IsBoolInstanceVarSet,
+		C3.Plugins.System.Acts.SetBoolVar,
 		C3.Plugins.Sprite.Exps.X,
 		C3.Plugins.Sprite.Exps.Y,
 		C3.Plugins.Touch.Exps.X,
@@ -4258,12 +4258,13 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.Sprite.Cnds.CompareInstanceVar,
 		C3.Plugins.Sprite.Acts.RemoveFromParent,
 		C3.Plugins.Sprite.Acts.MoveToLayer,
+		C3.Plugins.Sprite.Acts.MoveToBottom,
 		C3.Plugins.Sprite.Acts.SetPos,
+		C3.Plugins.System.Cnds.Else,
 		C3.Plugins.Sprite.Acts.SetAngle,
 		C3.Behaviors.Tween.Acts.TweenOneProperty,
 		C3.Plugins.Sprite.Exps.Angle,
 		C3.Plugins.Sprite.Acts.SetY,
-		C3.Plugins.Sprite.Acts.MoveToBottom,
 		C3.Plugins.Sprite.Acts.SetTowardPosition,
 		C3.Behaviors.Tween.Acts.TweenTwoProperties,
 		C3.Plugins.Sprite.Acts.ZMoveToObject,
@@ -4615,10 +4616,11 @@ self.C3_ExpressionFuncs = [
 			return () => f0((n1.ExpObject(1) / 16));
 		},
 		() => 680,
+		() => "Player",
 		p => {
 			const f0 = p._GetNode(0).GetBoundMethod();
 			const f1 = p._GetNode(1).GetBoundMethod();
-			return () => f0((f1() / 16));
+			return () => ((f0((f1() / 16)) * 16) + 8);
 		},
 		() => "Weapon",
 		p => {
@@ -4632,7 +4634,6 @@ self.C3_ExpressionFuncs = [
 			return () => ((-180) + v0.GetValue());
 		},
 		() => "NoHandH",
-		() => "Player",
 		p => {
 			const n0 = p._GetNode(0);
 			return () => n0.ExpObject(1);
