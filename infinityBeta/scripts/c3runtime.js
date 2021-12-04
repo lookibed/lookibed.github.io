@@ -4297,7 +4297,6 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.Sprite.Acts.MoveToLayer,
 		C3.Plugins.Sprite.Acts.MoveToBottom,
 		C3.Plugins.Sprite.Acts.SetPos,
-		C3.Plugins.Sprite.Acts.SetCollisions,
 		C3.Plugins.Sprite.Acts.SetAngle,
 		C3.Behaviors.Tween.Acts.TweenOneProperty,
 		C3.Plugins.Sprite.Exps.Angle,
@@ -4305,7 +4304,6 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.Sprite.Acts.SetTowardPosition,
 		C3.Plugins.Sprite.Acts.ZMoveToObject,
 		C3.Behaviors.Tween.Cnds.OnAnyTweensFinished,
-		C3.Behaviors.Tween.Cnds.IsPlaying,
 		C3.Plugins.Sprite.Cnds.AngleWithin,
 		C3.Behaviors.Tween.Cnds.IsAnyPlaying,
 		C3.Plugins.Particles.Acts.SetAngle,
@@ -4321,7 +4319,6 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.Sprite.Cnds.IsAnimPlaying,
 		C3.Behaviors.Tween.Cnds.OnTweensFinished,
 		C3.Plugins.Sprite.Cnds.IsOnLayer,
-		C3.Plugins.Sprite.Cnds.IsCollisionEnabled,
 		C3.Behaviors.LOS.Cnds.HasLOSToObject,
 		C3.Plugins.Sprite.Cnds.PickDistance,
 		C3.Plugins.System.Acts.CreateObjectByName,
@@ -4339,6 +4336,7 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.Sprite.Exps.LayerNumber,
 		C3.Plugins.Sprite.Cnds.OnCollision,
 		C3.Behaviors.Tween.Acts.StopAllTweens,
+		C3.Behaviors.Tween.Cnds.IsPlaying,
 		C3.Plugins.System.Acts.SetLayerOpacity,
 		C3.Behaviors.Tween.Exps.Value,
 		C3.Plugins.System.Cnds.LayerCmpOpacity,
@@ -4417,6 +4415,7 @@ self.C3_JsPropNameTable = [
 	{InveBar: 0},
 	{type: 0},
 	{tr: 0},
+	{posad: 0},
 	{axe: 0},
 	{mine: 0},
 	{vpah: 0},
@@ -4441,7 +4440,8 @@ self.C3_JsPropNameTable = [
 	{item7: 0},
 	{item8: 0},
 	{item9: 0},
-	{Sprite: 0},
+	{check: 0},
+	{pat: 0},
 	{Family1: 0},
 	{invBarr: 0},
 	{DragDrop: 0},
@@ -4759,7 +4759,6 @@ self.C3_ExpressionFuncs = [
 		() => "up",
 		() => "mine",
 		() => "vpah",
-		() => "have",
 		() => "Foll",
 		p => {
 			const f0 = p._GetNode(0).GetBoundMethod();
@@ -4817,9 +4816,34 @@ self.C3_ExpressionFuncs = [
 			return () => f0((n1.ExpObject(1) / 16));
 		},
 		() => 226,
+		p => {
+			const f0 = p._GetNode(0).GetBoundMethod();
+			const n1 = p._GetNode(1);
+			return () => ((f0((n1.ExpObject(1) / 16)) * 16) + 8);
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			const f1 = p._GetNode(1).GetBoundMethod();
+			return () => (n0.ExpObject() + f1((-10), 10));
+		},
+		p => {
+			const f0 = p._GetNode(0).GetBoundMethod();
+			return () => f0(0.6, 1);
+		},
+		() => "falls",
+		p => {
+			const n0 = p._GetNode(0);
+			const f1 = p._GetNode(1).GetBoundMethod();
+			return () => (n0.ExpObject() + f1((-15), (-25)));
+		},
+		p => {
+			const f0 = p._GetNode(0).GetBoundMethod();
+			return () => f0(0.4, 0.6);
+		},
 		() => 0.12,
 		() => "runBack",
 		() => 0.4,
+		() => "have",
 		p => {
 			const n0 = p._GetNode(0);
 			const n1 = p._GetNode(1);
