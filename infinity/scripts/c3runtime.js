@@ -4083,6 +4083,39 @@ const i=VALID_MOVEMENTS.indexOf(m);if(i===-1)throw new Error("invalid movement")
 }
 
 {
+'use strict';const C3=self.C3;C3.Behaviors.bound=class BoundBehavior extends C3.SDKBehaviorBase{constructor(opts){super(opts)}Release(){super.Release()}};
+
+}
+
+{
+'use strict';const C3=self.C3;C3.Behaviors.bound.Type=class BoundType extends C3.SDKBehaviorTypeBase{constructor(behaviorType){super(behaviorType)}Release(){super.Release()}OnCreate(){}};
+
+}
+
+{
+'use strict';const C3=self.C3;const MODE=0;
+C3.Behaviors.bound.Instance=class BoundInstance extends C3.SDKBehaviorInstanceBase{constructor(behInst,properties){super(behInst);this._mode=0;if(properties)this._mode=properties[MODE];this._StartTicking2()}Release(){super.Release()}SaveToJson(){return{"m":this._mode}}LoadFromJson(o){this._mode=o["m"]}Tick2(){const wi=this._inst.GetWorldInfo();const bbox=wi.GetBoundingBox();const layout=wi.GetLayout();let isChanged=false;if(this._mode===0){if(wi.GetX()<0){wi.SetX(0);isChanged=true}if(wi.GetY()<0){wi.SetY(0);
+isChanged=true}if(wi.GetX()>layout.GetWidth()){wi.SetX(layout.GetWidth());isChanged=true}if(wi.GetY()>layout.GetHeight()){wi.SetY(layout.GetHeight());isChanged=true}}else{if(bbox.getLeft()<0){wi.OffsetX(-bbox.getLeft());isChanged=true}if(bbox.getTop()<0){wi.OffsetY(-bbox.getTop());isChanged=true}if(bbox.getRight()>layout.GetWidth()){wi.OffsetX(-(bbox.getRight()-layout.GetWidth()));isChanged=true}if(bbox.getBottom()>layout.GetHeight()){wi.OffsetY(-(bbox.getBottom()-layout.GetHeight()));isChanged=true}}if(isChanged)wi.SetBboxChanged()}GetPropertyValueByIndex(index){switch(index){case MODE:return this._mode}}SetPropertyValueByIndex(index,
+value){switch(index){case MODE:this._mode=value;break}}};
+
+}
+
+{
+'use strict';const C3=self.C3;C3.Behaviors.bound.Cnds={};
+
+}
+
+{
+'use strict';const C3=self.C3;C3.Behaviors.bound.Acts={};
+
+}
+
+{
+'use strict';const C3=self.C3;C3.Behaviors.bound.Exps={};
+
+}
+
+{
 'use strict';const C3=self.C3;
 C3.Behaviors.DragnDrop=class DragnDropBehavior extends C3.SDKBehaviorBase{constructor(opts){super(opts);const rt=this._runtime.Dispatcher();this._disposables=new C3.CompositeDisposable(C3.Disposable.From(rt,"pointerdown",e=>this._OnPointerDown(e.data)),C3.Disposable.From(rt,"pointermove",e=>this._OnPointerMove(e.data)),C3.Disposable.From(rt,"pointerup",e=>this._OnPointerUp(e.data,false)),C3.Disposable.From(rt,"pointercancel",e=>this._OnPointerUp(e.data,true)))}Release(){this._disposables.Release();this._disposables=
 null;super.Release()}_OnPointerDown(e){if(e["pointerType"]==="mouse"&&e["button"]!==0)return;this._OnInputDown(e["pointerId"].toString(),e["pageX"]-this._runtime.GetCanvasClientX(),e["pageY"]-this._runtime.GetCanvasClientY())}_OnPointerMove(e){if((e["lastButtons"]&1)!==0&&(e["buttons"]&1)===0)this._OnInputUp(e["pointerId"].toString());else this._OnInputMove(e["pointerId"].toString(),e["pageX"]-this._runtime.GetCanvasClientX(),e["pageY"]-this._runtime.GetCanvasClientY())}_OnPointerUp(e,isCancel){if(e["pointerType"]===
@@ -4189,12 +4222,14 @@ self.C3_GetObjectRefTable = function () {
 		C3.Behaviors.Sin,
 		C3.Plugins.LocalStorage,
 		C3.Plugins.Particles,
+		C3.Behaviors.bound,
 		C3.Plugins.Mouse,
 		C3.Behaviors.DragnDrop,
 		C3.Behaviors.LOS,
 		C3.Plugins.System.Cnds.OnLayoutStart,
 		C3.Plugins.Sprite.Acts.Destroy,
 		C3.Plugins.Sprite.Acts.StopAnim,
+		C3.Behaviors.Tween.Acts.TweenValue,
 		C3.Plugins.System.Cnds.Repeat,
 		C3.Plugins.System.Acts.SetVar,
 		C3.Plugins.System.Exps.loopindex,
@@ -4302,6 +4337,12 @@ self.C3_GetObjectRefTable = function () {
 		C3.Behaviors.DragnDrop.Cnds.OnDragStart,
 		C3.Behaviors.DragnDrop.Cnds.OnDrop,
 		C3.Plugins.Sprite.Exps.LayerNumber,
+		C3.Plugins.Sprite.Cnds.OnCollision,
+		C3.Behaviors.Tween.Acts.StopAllTweens,
+		C3.Plugins.System.Acts.SetLayerOpacity,
+		C3.Behaviors.Tween.Exps.Value,
+		C3.Plugins.System.Cnds.LayerCmpOpacity,
+		C3.Plugins.Sprite.Exps.AnimationFrame,
 		C3.Plugins.Touch.Cnds.OnTouchObject,
 		C3.Plugins.System.Acts.LoadState,
 		C3.Plugins.System.Acts.GoToLayout
@@ -4359,8 +4400,9 @@ self.C3_JsPropNameTable = [
 	{Particles2: 0},
 	{Derevo3: 0},
 	{Player: 0},
+	{BoundToLayout: 0},
 	{Sprite3: 0},
-	{Sprite: 0},
+	{Dom: 0},
 	{hp: 0},
 	{Derevo: 0},
 	{Particles3: 0},
@@ -4399,6 +4441,7 @@ self.C3_JsPropNameTable = [
 	{item7: 0},
 	{item8: 0},
 	{item9: 0},
+	{Sprite: 0},
 	{Family1: 0},
 	{invBarr: 0},
 	{DragDrop: 0},
@@ -4517,6 +4560,10 @@ function or(l, r)
 }
 
 self.C3_ExpressionFuncs = [
+		() => "black",
+		() => 0,
+		() => 100,
+		() => 120,
 		() => 3,
 		p => {
 			const f0 = p._GetNode(0).GetBoundMethod();
@@ -4545,7 +4592,6 @@ self.C3_ExpressionFuncs = [
 			const v0 = p._GetNode(0).GetVar();
 			return () => v0.GetValue();
 		},
-		() => 0,
 		p => {
 			const f0 = p._GetNode(0).GetBoundMethod();
 			return () => f0(0, 100);
@@ -4577,7 +4623,6 @@ self.C3_ExpressionFuncs = [
 		() => 66,
 		() => 77,
 		() => 78,
-		() => 100,
 		p => {
 			const f0 = p._GetNode(0).GetBoundMethod();
 			const f1 = p._GetNode(1).GetBoundMethod();
@@ -4809,6 +4854,16 @@ self.C3_ExpressionFuncs = [
 			return () => (v0.GetValue() * (-1));
 		},
 		() => -1,
+		() => 150,
+		() => 2,
+		p => {
+			const n0 = p._GetNode(0);
+			return () => n0.ExpBehavior("black");
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			return () => (n0.ExpObject() + 1);
+		},
 		p => {
 			const v0 = p._GetNode(0).GetVar();
 			return () => (v0.GetValue() / 720);
