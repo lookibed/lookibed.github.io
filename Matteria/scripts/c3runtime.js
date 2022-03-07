@@ -4859,6 +4859,7 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.Timeline.Acts.ResumeAllTimelines,
 		C3.Plugins.Mouse.Cnds.OnObjectClicked,
 		C3.Plugins.System.Acts.SaveState,
+		C3.Plugins.System.Cnds.OnSaveComplete,
 		C3.Plugins.Browser.Acts.Close,
 		C3.Behaviors.Tween.Cnds.IsAnyPlaying,
 		C3.Plugins.System.Acts.GoToLayout,
