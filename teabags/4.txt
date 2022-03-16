@@ -1,0 +1,15 @@
+-1|0/TBag and Shuga Reeves arrive at the place where they see the spoon and the cup of coffee.
+0|1/TBag: - Spoon! Finally!!! Are you okay???
+3|0/Shuga Reeves: (to the cup) - Jack, is your girl all right? That idiot told me that she was kidnapped from you.
+2|0/Jack Coffi: (not understanding) - What?
+1|1/Spoon: (Shocked) - Baggy?! What are you doing here?
+0|0/Tea bag: (bewildered) - You've been kidnapped!!! I went to save you!!... And also... I wanted to confess my feelings...
+1|2/Spoon: (a little annoyed) - TBag... I know very well about your feelings. I keep telling you that we're just friends. We can't be together... Please stop this... You're constantly chasing me. Even now. Where the hell are you going, for what??? An imaginary chance that I will give you?!
+2|1/Jack Coffi: (shocked)
+0|2/TBag: (shocked) So it was all a lie???
+2|0/Jack Coffi: - I think she tells you a little about something else.
+0|4/TBag: - SHUT UP!!! All this time she knew and played with my feelings!!!
+1|1/Spoon: - What are you talking about? I told you a million times that we're just friends! You don't attract me like a man... well... said... Besides, I like guys like Jack! Is it my fault that I have certain tastes???
+0|1/Tea bag: (crying) What kind of Wh…
+-1|0/Unexpected Voice: - Shelly!!! We'll be late for school, let's finish your breakfast soon!!!
+-1|0/Shelly: - Yes, Mom! Can you imagine, Mr. TBag, confessed to Miss Spoon that he was in love with her, and she rejected him!!!...

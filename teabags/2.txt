@@ -1,0 +1,12 @@
+-1|0/TBag lands on the kitchen table (cutting). It is surrounded by large dishes. He meets marshmallow on the table, from a bag of marshmallows
+0|0/Tea bag: - Umm… Hello, is there anyone here?
+4|0/Marshmallow: - Oh, hello! Are you from the supermarket too? How do you like the new house? My name is Marshall Mellow
+0|3/TBag: (uncomprehending) - Super what? Look, I lost my girlfriend, you didn't see her here. Tall, metal - call Spoon.
+4|1/Marshall Mellow: (dispassionately and a little offended) - So that means yes ... God ... There are a whole bunch of them on the table. Well, why do you need.
+0|0/TBag: (nervously) I love her... And she was kidnapped...
+4|0/Marshall Mellow: (uncomprehending) What do you mean?
+0|1/TBag: (mysteriously) - Every few days one of us gets kidnapped and never comes back. I didn't expect her to be picked up so early... I wanted to confess to her... And now I have to do it at all costs!!
+-1|0/The magical power picks up the Packet again and carries it somewhere. Marshall Mellow hears: “Thanks for the tip!!! You're the best!!!"
+4|0/Marshmallow: - That's a fool ...
+-1|0/Voice: MARSHALL MELLOW - YOU ARE DETECTED FOR SELLING MOLD!!! YOU HAVE THE RIGHT TO BE SILENT!!!
+4|0/Marshmallow: You’ll never catch me stinky cops!!!

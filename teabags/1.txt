@@ -1,0 +1,21 @@
+-1|0/Sideboard, silence, tea bag draws attention to the teaspoon. She draws attention to him.
+0|0/TBag: - Hi Spoon… How are you today? 
+1|3/Spoon: - Baggy, please stop asking me about it every day. We spend almost every day together, believe me, you know my life better than I seem to myself. (laughs)
+0|1/TBag: (nervously) - Yes... Really... Well, I just thought something interesting happened...
+6|0/Spoon’s neighbor: (playfully) - Just someone in love ...
+1|0/Spoon: - Oh, stop it, we have known each other for fourteen days, we are good friends
+0|0/TBag: - Yes... Exactly... (a little upset).
+5|0/TBag’s neighbor: (whispering) Why don't you tell her you love her? And look, you won’t be able to do it at all ...
+-1|0/The sideboard opens, the light blinds everyone present, panic begins. The buffet closes, the panicking people begin to hastily find out if everything is in place.
+6|1/Spoon’s neighbor: (hysterically) Spoon! The “chthonic monster” stole the spoon!!!
+0|2/TBag: (shocked) No… (panicked) No, no, no…
+5|0/TBag’s neighbor: Well, that's exactly what I was talking about. You missed your chance, dude.
+0|2/TBag (in panic) What to do???!!!!
+5|0/TBag’s neighbor: What do you mean? Sit quietly, pray that next time they don't take you away. Still, she can't be helped. Your lover is probably already dead. Who knows what awaits her. But I'm pretty sure she just died.
+0|0/TBag: No, I don't believe it, she's alive, I have to find her.
+5|0/TBag’s neighbor: Completely mad?! You know that none of our people have returned from there yet.
+0|0/TBag: I don't care, the only thing that matters is that I love her!!!
+5|0/TBag’s neighbor: Well, let's say you, the crazed teabag, decided to save this piece of iron, how are you going to do it?
+0|0/TBag: I don't know... But love will help me to find her
+-1|0/The magic force picks up the tag and takes it away. TBag shouts: "I'm fly to you Spoon!"
+5|0/TBag’s neighbor: (indifferently after a pause) What a fool...
