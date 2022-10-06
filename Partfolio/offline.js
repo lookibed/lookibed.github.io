@@ -1,5 +1,5 @@
 ﻿{
-	"version": 1665041680,
+	"version": 1665048861,
 	"fileList": [
 		"data.js",
 		"c2runtime.js",
@@ -63,8 +63,6 @@
 		"images/ugabuga-sheet1.png",
 		"images/tiledbackground2.png",
 		"images/lookibed-sheet0.png",
-		"images/lookibed-sheet1.png",
-		"images/lookibed-sheet2.png",
 		"images/panel-sheet0.png",
 		"images/panel2-sheet0.png",
 		"images/panel3-sheet0.png",
@@ -77,9 +75,9 @@
 		"images/backmobile.png",
 		"images/backnadic.png",
 		"images/backnadic2.png",
-		"images/sprite10-sheet0.png",
-		"images/sss-sheet0.png",
-		"images/Беed-sheet0.png",
+		"images/star-sheet0.png",
+		"images/constructlogo-sheet0.png",
+		"images/unity-sheet0.png",
 		"images/backnadic3.png",
 		"images/clipbord-sheet0.png",
 		"icon-16.png",
