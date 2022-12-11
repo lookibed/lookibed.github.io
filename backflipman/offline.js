@@ -1,0 +1,33 @@
+﻿{
+	"version": 1670781730,
+	"fileList": [
+		"data.js",
+		"c2runtime.js",
+		"jquery-3.4.1.min.js",
+		"offlineClient.js",
+		"images/rotright-sheet0.png",
+		"images/sprite4-sheet0.png",
+		"images/sprite-sheet0.png",
+		"images/sprite2-sheet0.png",
+		"images/rotleft-sheet0.png",
+		"images/botjump-sheet0.png",
+		"images/player-sheet0.png",
+		"images/effectjump-sheet0.png",
+		"images/checkjump-sheet0.png",
+		"images/turbina-sheet0.png",
+		"images/effectjump2-sheet0.png",
+		"images/effectjump2-sheet1.png",
+		"images/spritefont.png",
+		"images/pldvigaetsia.png",
+		"images/asd-sheet0.png",
+		"images/sprite6-sheet0.png",
+		"images/sprite3-sheet0.png",
+		"images/tilemap.png",
+		"icon-16.png",
+		"icon-32.png",
+		"icon-114.png",
+		"icon-128.png",
+		"icon-256.png",
+		"loading-logo.png"
+	]
+}
