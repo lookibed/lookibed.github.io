@@ -56,14 +56,14 @@ threeCamera.position.set(5, 2, 8);
 threeControls = new OrbitControls(threeCamera, threeRenderer.domElement);
 threeControls.target.set(0, 0.5, 0);
 threeControls.update();
-threeControls.enablePan = false;
-threeControls.enableDamping = true;
+// threeControls.enablePan = false;
+// threeControls.enableDamping = true;
 
-// Создание геометрии: вращающийся торус
-const geometry = new THREE.TorusGeometry(1, 0.4, 16, 100); // радиус, толщина, сегменты
-const material = new THREE.MeshStandardMaterial({ color: 0xff6347 }); // цвет материала
-const torus = new THREE.Mesh(geometry, material);
-threeScene.add(torus);
+// // Создание геометрии: вращающийся торус
+// const geometry = new THREE.TorusGeometry(1, 0.4, 16, 100); // радиус, толщина, сегменты
+// const material = new THREE.MeshStandardMaterial({ color: 0xff6347 }); // цвет материала
+// const torus = new THREE.Mesh(geometry, material);
+// threeScene.add(torus);
 
 // Load 3D model
 const dracoLoader = new DRACOLoader();
@@ -72,9 +72,10 @@ dracoLoader.setDecoderPath('draco-gltf-decoder/');
 const loader = new GLTFLoader();
 loader.setDRACOLoader(dracoLoader);
 
-loader.load('https://lookibed.github.io/mank.glb', (gltf) => {
+loader.load('https://lookibed.github.io/miside/misa_stok.glb', (gltf) => {
     const model = gltf.scene;
-    model.position.set(0, 0, 0);
+	model.scale.set(6.01, 6.01, 6.01);
+    model.position.set(0, -3, 0);
     threeScene.add(model);
 
     threeMixer = new THREE.AnimationMixer(model);
