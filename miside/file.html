@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Three.js with CDN</title>
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.module.js",
+      "three/addons/controls/OrbitControls.js": "https://cdn.jsdelivr.net/npm/three@0.158.0/examples/jsm/controls/OrbitControls.js",
+      "three/addons/environments/RoomEnvironment.js": "https://cdn.jsdelivr.net/npm/three@0.158.0/examples/jsm/environments/RoomEnvironment.js",
+      "three/addons/loaders/GLTFLoader.js": "https://cdn.jsdelivr.net/npm/three@0.158.0/examples/jsm/loaders/GLTFLoader.js",
+      "three/addons/loaders/DRACOLoader.js": "https://cdn.jsdelivr.net/npm/three@0.158.0/examples/jsm/loaders/DRACOLoader.js"
+    }
+  }
+  </script>
+</head>
+<body>
+  <script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
+
+// Three.js objects
+let threeRenderer = null;
+let threeCamera = null;
+let threeMixer = null;
+let threeControls = null;
+let threeScene = null;
+
+
+
+
+// Create Three.js WebGL renderer with antialiasing and transparent background
+threeRenderer = new THREE.WebGLRenderer({
+    antialias: true,
+    alpha: true
+});
+
+// Set renderer size and append canvas to the container
+threeRenderer.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(threeRenderer.domElement);
+
+// Create a 3D scene and camera
+const pmremGenerator = new THREE.PMREMGenerator(threeRenderer);
+threeScene = new THREE.Scene();
+threeScene.environment = pmremGenerator.fromScene(new RoomEnvironment(threeRenderer), 0.04).texture;
+
+threeCamera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 1, 100);
+threeCamera.position.set(5, 2, 8);
+
+// Add OrbitControls for mouse interaction
+threeControls = new OrbitControls(threeCamera, threeRenderer.domElement);
+threeControls.target.set(0, 0.5, 0);
+threeControls.update();
+threeControls.enablePan = false;
+threeControls.enableDamping = true;
+
+// Создание геометрии: вращающийся торус
+const geometry = new THREE.TorusGeometry(1, 0.4, 16, 100); // радиус, толщина, сегменты
+const material = new THREE.MeshStandardMaterial({ color: 0xff6347 }); // цвет материала
+const torus = new THREE.Mesh(geometry, material);
+threeScene.add(torus);
+
+// Load 3D model
+const dracoLoader = new DRACOLoader();
+dracoLoader.setDecoderPath('draco-gltf-decoder/');
+
+const loader = new GLTFLoader();
+loader.setDRACOLoader(dracoLoader);
+
+loader.load('https://lookibed.github.io/mank.glb', (gltf) => {
+    const model = gltf.scene;
+    model.position.set(0, 0, 0);
+    threeScene.add(model);
+
+    threeMixer = new THREE.AnimationMixer(model);
+    if (gltf.animations.length > 0) {
+        threeMixer.clipAction(gltf.animations[0]).play();
+    }
+}, undefined, (error) => {
+    console.error('Error loading model:', error);
+});
+
+// Обработка изменения размеров окна
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+// Animation loop
+function Animate() {
+    requestAnimationFrame(Animate);
+
+    if (threeMixer) {
+        threeMixer.update(0.016); // Approximate 60 FPS delta-time
+    }
+
+    threeControls.update();
+
+    threeRenderer.render(threeScene, threeCamera);
+}
+Animate()
+
+</script>
+</body>
+</html>
